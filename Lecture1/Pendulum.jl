@@ -9,12 +9,12 @@ L=0.5 #meters
 #write equation of motion for a pendulum
 function PendulumEOM(ddθ,dθ,θ,p,t)
     g, L = p
-    ddθ[1] = -g[1]*sin(θ[1])/L
+    ddθ[1] = -g*sin(θ[1])/L
 end
 
 #solver controls
 dt=0.01 #seconds
-totalt=2 #seconds
+totalt=10 #seconds
 
 #define initial conditions
 θo=pi/12
@@ -26,7 +26,7 @@ sol = solve(prob, DPRKN6(),tstops=0:dt:totalt)
 
 #separate out θ(t),dθ(t), and t from solution
 θ=first.(sol.u)
-dθ=last.(sol.u)
+dθ=last.(sol.u)   #angular velocity
 t=sol.t
 
 #plot results

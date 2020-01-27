@@ -3,30 +3,32 @@
 using OrdinaryDiffEq
 
 #define constants
+m=0.035    #kg
 g=9.8  #m/s^2
 L=0.5 #meters
+c=0.018  #wind resistance parameter
 
 #write equation of motion for a pendulum
 function PendulumEOM(ddθ,dθ,θ,p,t)
-    g, L = p
-    ddθ[1] = -g[1]*sin(θ[1])/L
+    g, L, c, m = p
+    ddθ[1] = -g*sin(θ[1])/L - c*dθ[1]/m
 end
 
 #solver controls
 dt=0.01 #seconds
-totalt=2 #seconds
+totalt=20 #seconds
 
 #define initial conditions
-θo=pi/12
+θo=pi/4
 dθo=0.0
 
 #solve the ODE
-prob = SecondOrderODEProblem(PendulumEOM, [θo], [dθo], (0.,totalt), (g,L))
+prob = SecondOrderODEProblem(PendulumEOM, [θo], [dθo], (0.,totalt), (g,L,c, m))
 sol = solve(prob, DPRKN6(),tstops=0:dt:totalt)
 
 #separate out θ(t),dθ(t), and t from solution
 θ=first.(sol.u)
-dθ=last.(sol.u)
+dθ=last.(sol.u)   #angular velocity
 t=sol.t
 
 #plot results
