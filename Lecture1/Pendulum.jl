@@ -21,12 +21,12 @@ totalt=10 #seconds
 dθo=0.0
 
 #solve the ODE
-prob = SecondOrderODEProblem(PendulumEOM, [θo], [dθo], (0.,totalt), (g,L))
+prob = SecondOrderODEProblem(PendulumEOM, [dθo], [θo], (0.,totalt), (g,L))
 sol = solve(prob, DPRKN6(),tstops=0:dt:totalt)
 
 #separate out θ(t),dθ(t), and t from solution
-θ=first.(sol.u)
-dθ=last.(sol.u)   #angular velocity
+dθ=first.(sol.u)
+θ=last.(sol.u)   #angular velocity
 t=sol.t
 
 #plot results
