@@ -15,59 +15,60 @@ function PendulumEOM(ddθ,dθ,θ,p,t)
 end
 
 #solver controls
-dt=0.01 #seconds
-totalt=20 #seconds
+dt=0.001 #seconds
+totalt=10 #seconds
 
 #define initial conditions
 θo=pi/4
 dθo=0.0
 
 #solve the ODE
-prob = SecondOrderODEProblem(PendulumEOM, [θo], [dθo], (0.,totalt), (g,L,c, m))
+prob = SecondOrderODEProblem(PendulumEOM, [dθo], [θo], (0.,totalt), (g,L,c, m))
 sol = solve(prob, DPRKN6(),tstops=0:dt:totalt)
 
 #separate out θ(t),dθ(t), and t from solution
-θ=first.(sol.u)
-dθ=last.(sol.u)   #angular velocity
+dθ=first.(sol.u)
+θ=last.(sol.u)
 t=sol.t
 
-# #plot results
+
 using Plots    #start Julia plot package
-# plot(t,θ,linewidth=1,title="pendulum free vibration",
-#     xaxis="time, t (sec.)",yaxis="rotation, \\theta (t) (radians)", legend=false)
 
-#let's study load deformation and energy
 
-    #calculate forces acting first
+#calculate angular acceleration vs. time
+    ddθ=diff(dθ)./diff(t)
+    ddθ=[ddθ[1];ddθ]
 
-        #calculate intertial force
-        #need acceleration, take numerical derivative of velocity
-        ddθ=[0; diff(dθ)]./[0; diff(t)]
-        fI=m.*L.^2 .*ddθ
-        fI[1]=0   #clean up numerical messiness
+#plot angular rotation, velocity, and acceleration
+    p1=plot(t,θ,xaxis="t (sec.)",yaxis="\\theta")
+    p2=plot(t,dθ,xaxis="t (sec.)",yaxis="d\\theta")
+    p3=plot(t,ddθ,xaxis="t (sec.)",yaxis="dd\\theta")
+    plot(p1,p2,p3,layout=(3,1),legend=false)
+
+#let's study moment-rotation and energy
+
+     #calculate moments acting first
+
+        #calculate inertial force
+        momentI=m.*L.^2 .*ddθ
         #calculate gravity force
-        fG=m.*g.*L*sin.(θ)
+        momentG=m.*g.*L*sin.(θ)
         #calculate damping force
-        fD=c .*dθ
+        momentD=c .*dθ*L.^2
 
-    #now calculate moments
+     #plot M vs. time
+        p1=plot(t,momentI,xaxis="t (sec.)",yaxis="momentI")
+        p2=plot(t,momentG,xaxis="t (sec.)",yaxis="momentG")
+        p3=plot(t,momentD,xaxis="t (sec.)",yaxis="momentD")
+        plot(p1,p2,p3,layout=(3,1),legend=false)
 
-        #inertial moment
-        momentI=fI.*L
-        #gravity moment
-        momentG=fG.*L
-        #damping moment
-        momentD=fD.*L
-
-    #plot M vs. θ
+    # plot M vs. θ
         p1=plot(θ,momentI,xaxis="rotation, \\theta (t) (radians)",yaxis="momentI, kN-m")
         p2=plot(θ,momentG,xaxis="rotation, \\theta (t) (radians)",yaxis="momentG, kN-m")
         p3=plot(θ,momentD,xaxis="rotation, \\theta (t) (radians)",yaxis="momentD, kN-m")
         plot(p1,p2,p3,layout=(3,1),legend=false)
 
     #calculate energy quantities
-            # using Statistics
-
             #write a little function to help with this
             #integrate little chunks of M vs. θ
             function CalculateEnergy(M,θ)
@@ -88,18 +89,24 @@ using Plots    #start Julia plot package
             energyD=CalculateEnergy(momentD,θ)
 
             #plot instantaneous energy vs. time
-            p1=plot(t,energyI)
-            p2=plot(t,energyG)
-            p3=plot(t,energyD)
+            p1=plot(t,energyI,xaxis="t (sec.)",yaxis="energyI, kN-m")
+            p2=plot(t,energyG,xaxis="t (sec.)",yaxis="energyG, kN-m")
+            p3=plot(t,energyD, xaxis="t (sec.)",yaxis="energyD, kN-m")
+            plot(p1,p2,p3,layout=(3,1),legend=false)
 
-    #calculate cumulative energy
+    #calculate cumulative energy over time
 
             CumulativeEnergyI=accumulate(+, energyI)
             CumulativeEnergyG=accumulate(+, energyG)
             CumulativeEnergyD=accumulate(+, energyD)
 
+            #add up all the energy
+            #should be zero at any time t, however there is some numerical error
+            TotalCEnergy=CumulativeEnergyI+CumulativeEnergyG+CumulativeEnergyD
+
             #plot cumulative energy vs. time
-            p1=plot(t,CumulativeEnergyI)
-            p2=plot(t,CumulativeEnergyG)
-            p3=plot(t,CumulativeEnergyD)
-            plot(p1,p2,p3,layout=(3,1),legend=false)
+            p1=plot(t,CumulativeEnergyI,xaxis="t (sec.)",yaxis="CeI, kN-m")
+            p2=plot(t,CumulativeEnergyG,xaxis="t (sec.)",yaxis="CeG, kN-m")
+            p3=plot(t,CumulativeEnergyD,xaxis="t (sec.)",yaxis="CeD, kN-m")
+            p4=plot(t,TotalCEnergy,xaxis="t (sec.)",yaxis="CeI+G+D, kN-m")
+            plot(p1,p2,p3,p4,layout=(4,1),legend=false)
