@@ -49,11 +49,11 @@ using Plots    #start Julia plot package
 
      #calculate moments acting first
 
-        #calculate inertial force
+        #calculate inertial moment
         momentI=m.*L.^2 .*ddθ
-        #calculate gravity force
+        #calculate gravity moment
         momentG=m.*g.*L*sin.(θ)
-        #calculate damping force
+        #calculate damping moment
         momentD=c .*dθ*L.^2
 
      #plot M vs. time
