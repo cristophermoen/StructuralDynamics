@@ -24,7 +24,7 @@ a=1000000 #N
 
 #write equation of motion
 function SpringMassDamperEOM(ddu,du,u,p,t)
-    m, k, c = p
+    m, k, c, a, ω  = p
 
     pt=a*sin(ω*t[1])  #forcing function, can be general
 
@@ -40,7 +40,7 @@ uo=0.0  #meters
 duo=0.0 #m/sec.
 
 #solve the ODE
-prob = SecondOrderODEProblem(SpringMassDamperEOM, [duo], [uo], (0.,totalt), (m, k, c))
+prob = SecondOrderODEProblem(SpringMassDamperEOM, [duo], [uo], (0.,totalt), (m, k, c, a, ω))
 sol = solve(prob, DPRKN6(),tstops=0:dt:totalt)
 
 #separate out u(t),du(t), and t from solution
