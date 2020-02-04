@@ -70,23 +70,25 @@ using Plots    #start Julia plot package
 
     #calculate energy quantities
             #write a little function to help with this
-            #integrate little chunks of M vs. θ
-            function CalculateEnergy(M,θ)
+            #integrate little chunks of M vs. Δθ
+            function CalculateEnergy(M,Δθ)
                 energy=zeros(length(M))
-                for i=1:length(M)
-                    energy[i]=M[i]*θ[i]
+                for i=2:length(M)
+                    energy[i]=M[i]*Δθ[i]
                 end
                 return energy
             end
 
+            Δθ=[0; diff(θ)]
+
             #inertial energy
-            energyI=CalculateEnergy(momentI,θ)
+            energyI=CalculateEnergy(momentI,Δθ)
 
             #potential energy of mass
-            energyG=CalculateEnergy(momentG,θ)
+            energyG=CalculateEnergy(momentG,Δθ)
 
             # energy dissipated by air resistance
-            energyD=CalculateEnergy(momentD,θ)
+            energyD=CalculateEnergy(momentD,Δθ)
 
             #plot instantaneous energy vs. time
             p1=plot(t,energyI,xaxis="t (sec.)",yaxis="energyI, kN-m")
