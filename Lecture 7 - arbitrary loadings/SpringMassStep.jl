@@ -46,7 +46,7 @@ StepMagnitude=100.0
 StepTimeStart=0.0
 StepTimeEnd=4.0
 tArb=0:0.001:10
-fArb=StepLoading.(StepMagnitude,StepTimeStart,StepTimeEnd,tArb)
+fArb=RectangularStepLoading.(StepMagnitude,StepTimeStart,StepTimeEnd,tArb)
 
 plot(tArb,fArb)
 
