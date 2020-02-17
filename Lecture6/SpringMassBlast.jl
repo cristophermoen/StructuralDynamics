@@ -33,7 +33,6 @@ a=0 #N
 using DelimitedFiles
 
 fArb= vec(readdlm("blastforce.txt"))  #load the blast force, psi
-fArb=fArb*1000
 tArb=collect(range(0,length=5001,stop=0.5))  #define time range
 
 #define abitrary force as a spline for later interpolation
