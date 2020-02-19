@@ -14,7 +14,7 @@ k=ωn^2*m    #N/m
 ccr=2*m*ωn  #critical viscous damping coefficient
 c=ζ*ccr #viscous damping coefficient, units of kg/sec.
 
-μ=0.50  #friction coefficient
+μ=0.10  #friction coefficient
 N=m*g   #normal force
 F=μ*N   #friction force
 
@@ -27,16 +27,12 @@ Tn=1/fn       #period, seconds
 a=0 #N
 ω=0  #radians/sec.
 
-
 #write equation of motion
 function SpringMassDamperEOM(ddu,du,u,p,t)
     m, k, c, a, ω, F  = p
 
-    #make the forcing function random
-    r=rand()   #generates a random number from a uniform distribution [0,1]
-
     #harmonic forcing function
-    pt=a*r*sin(ω*t[1])
+    pt=a*sin(ω*t[1])
 
     #friction damping
     if du[1]>0
@@ -49,7 +45,7 @@ function SpringMassDamperEOM(ddu,du,u,p,t)
 end
 
 #solver controls
-dt=0.001 #seconds
+dt=0.1 #seconds
 totalt=10 #seconds
 
 #define initial conditions
@@ -65,7 +61,27 @@ du=first.(sol.u)
 u=last.(sol.u)   #angular velocity
 t=sol.t
 
-#plot results
-using Plots    #start Julia plot package
-plot(t,u,linewidth=1,
-    xaxis="t [sec.]",yaxis="u [meters]", legend=false)
+#animate mass
+using Makie
+
+#tuple of mass x-y position, the Node command automatically updates later
+#in the record function
+XYPos=Node((u[1],0))
+
+#define window and limits
+scene=Scene(resolution=(1000,500))
+Xmin=minimum(u)
+Ymin=-1
+Xmax=maximum(u)
+Ymax=1
+Xrange=Xmax-Xmin
+Yrange=Ymax-Ymin
+limits = FRect(Xmin, Ymin, Xrange, Yrange)
+
+#show mass
+scatter!(scene, lift(xy->Point2f0[xy],XYPos), marker = [:rect], limits=limits, color= :red, markersize=1)
+
+#animate
+record(scene, "pendulum_animation.mp4", range(1, stop = length(u), step=1)) do i
+     XYPos[]=(u[i],0)
+end

@@ -1,6 +1,10 @@
+
+#Assignment
+#https://docs.google.com/document/d/1tgflJUNkUJc0_0swLOhlgYpnDIw_B6UfHjFKDTVEWwU/edit?usp=sharing
+
 using OrdinaryDiffEq  #define Julia ODE package that we will use as solver
 using Distributions   #for Gaussian wind distribution
-using Dierckx  #this is for interpolating an aribtrary loading
+using Dierckx  #this is for interpolating an arbitrary loading
 
 #define constants
 m=100    #kg

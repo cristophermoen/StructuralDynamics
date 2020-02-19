@@ -35,6 +35,9 @@ using DelimitedFiles
 fArb= vec(readdlm("blastforce.txt"))  #load the blast force, psi
 tArb=collect(range(0,length=5001,stop=0.5))  #define time range
 
+#make sure to convert fArb to the correct units, right now it is a pressure
+
+
 #define abitrary force as a spline for later interpolation
 spl = Spline1D(tArb,fArb)
 plot(tArb,fArb)
@@ -51,7 +54,6 @@ function SpringMassDamperEOM(ddu,du,u,p,t)
     ptForcing=a*sin(ω*t[1])
 
     #interpolate abitrary force, send it to ODE solver
-    # spl = Spline1D(tArb,fArb)
     ptArb = spl(t[1])
 
     #friction damping

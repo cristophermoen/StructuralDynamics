@@ -10,11 +10,11 @@ fn=1/Tn
 
 k=ωn^2*m    #N/m
 
-ζ=0.00      #viscous damping ratio
+ζ=0.05      #viscous damping ratio
 ccr=2*m*ωn  #critical viscous damping coefficient
 c=ζ*ccr #viscous damping coefficient, units of kg/sec.
 
-μ=0.50  #friction coefficient
+μ=0.1  #friction coefficient
 N=m*g   #normal force
 F=μ*N   #friction force
 
@@ -34,8 +34,9 @@ function SpringMassDamperEOM(ddu,du,u,p,t)
     #harmonic forcing function
     pt=a*sin(ω*t[1])
 
+    #if friction force is bigger than spring force, stop solution
     #friction damping
-    if du[1]>0
+    if du[1]>0   #velocity
         SignF=1
     else
         SignF=-1
