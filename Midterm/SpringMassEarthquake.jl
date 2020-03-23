@@ -93,7 +93,7 @@ uTheory = zeros(length(t_eq))  #initialize response array
 #loop over unit impulses
 for i = 1:length(t_eq)-1
 
-    th=range(0,length=length(t_eq)-i,stop=(length(t_eq)-i-1)*0.01)  #t-τ
+    th=range(0,length=length(t_eq)-i,stop=(length(t_eq)-i-1)*dt)  #t-τ
     h = UnitImpulseResponse(th, m, ωD, ζ)  #unit response
     h=dt*h  #scale to make unit impulse = 1
     h=h*-ddu_g[i]*m #scale to arbitrary load impulse magnitude
