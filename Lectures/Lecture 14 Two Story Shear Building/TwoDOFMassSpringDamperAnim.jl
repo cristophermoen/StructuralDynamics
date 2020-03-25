@@ -5,15 +5,15 @@ using Dierckx  #for interpolating an aribtrary loading
 #Calculate the free vibration response of a two story shear building
 
 #floors
-m1 = 8000/2.281  #kg   #first floor, 20 psf dead load
+m1 = 8000/2.281  #kg   #first floor, 20 psf dead load over a 20x20 ft floorplan
 m2 = 4000/2.281  #kg   #second floor (or roof), 10 psf dead load
 
 #columns
 E=2E+11  #N/m^2
 Ic=723/12^4/3.281^4  #m^4   #W14x68 steel column, strong axis
 L=13/3.281  #m  column height
-k1 = 12*E*2*Ic/L^3
-k2 = 12*E*Ic/L^3
+k1 = 12*E*0.04*Ic/L^3
+k2 = 12*E*2*Ic/L^3
 
 #two viscous dampers
 c1 = 0.0
@@ -51,7 +51,7 @@ function mdof(ddu, du, u, p, t)
 
 end
  #                                    u_dot0      u_0     trange
-  prob = SecondOrderODEProblem(mdof, [0.; 0.], [0.; 0.1], (0.,10.),(M, C, K, pt1Spline, pt2Spline))
+  prob = SecondOrderODEProblem(mdof, [0.; 0.], [1.0; 0.], (0.,10.),(M, C, K, pt1Spline, pt2Spline))
   sol = solve(prob, DPRKN6(),tstops=0:0.01:10)
 
 u1_dot=(x->x[1]).(sol.u)
