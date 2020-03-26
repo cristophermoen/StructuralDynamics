@@ -78,56 +78,66 @@ Yrange=Ymax-Ymin
 limits = FRect(Xmin, Ymin, Xrange, Yrange)
 
 
+
+
 #define initial position
 XYPos1=Node(u1[1])
 XYPos2=Node(u2[1])
 
+
 #draw floors
+#first floor
 poly!(scene1, lift(xy->Point2f0[[L/2+xy, L+L/16], [-L/2+xy, L+L/16], [-L/2+xy, L-L/16], [L/2+xy, L-L/16]], XYPos1), color = :lightgray, show_axis = false, limits=limits)
-poly!(scene1, lift(xy->Point2f0[[L/2+xy, 2*L+L/16], [-L/2+xy, 2*L+L/16], [-L/2+xy, 2*L-L/16], [L/2+xy, 2*L-L/16]], XYPos2), color = :lightgray, show_axis = false, limits=limits)
+#second floor
+poly!(scene1, lift((xy1,xy2)->Point2f0[[L/2+xy1+xy2, 2*L+L/16], [-L/2+xy1+xy2, 2*L+L/16], [-L/2+xy1+xy2, 2*L-L/16], [L/2+xy1+xy2, 2*L-L/16]], XYPos1, XYPos2), color = :lightgray, show_axis = false, limits=limits)
 
 #draw ground and building centerline
 lines!([0, 0], [Ymin, Ymax], color= :black, linestyle= :dashdot)
-lines!([Xmin, Xmax], [0, 0], color= :black)
+lines!([Xmin, Xmax], [0, 0], color= :green, lineweight=6)
+
+#draw masses
+
+scatter!(scene1, lift(xy->Point2f0[(xy,L)],XYPos1), marker = [:circle], limits=limits, color= :red, markersize=1)  #first floor mass
+scatter!(scene1, lift((xy1,xy2)->Point2f0[(xy1+xy2,2*L)],XYPos1, XYPos2), marker = [:circle], limits=limits, color= :red, markersize=0.5)  #second floor mass
 
 
-function BeamShape(q1,q2,q3,q4,L,x)
+#draw columns
+#use shape function and coordinate system from
+#https://www.youtube.com/watch?v=K7lfyAldj5k
+
+function BeamShape(q1,q2,q3,q4,L,x, offset)
 
     a0=q1
     a1=q2
     a2=1/L^2*(-3*q1-2*q2*L+3*q3-q4*L)
     a3=1/L^3*(2*q1+q2*L-2*q3+q4*L)
 
-    w=a0 .+a1.*x .+a2.*x.^2 .+a3.*x.^3
+    w=a0 .+a1.*x .+a2.*x.^2 .+a3.*x.^3 .+offset
 
 end
 
 
-#draw columns
-#use shape function and coordinate system from
-#https://www.youtube.com/watch?v=K7lfyAldj5k
 x=0:L/10:L
 q1=0
 q2=0
-# q3=1.0
 q4=0
 
-# w1=lift(xy->BeamShape(q1,q2,xy,q4,L,x),XYPos1)
-lines!(lift(xy->BeamShape(q1,q2,xy,q4,L,x),XYPos1) .+L/2,x)
-lines!(lift(xy->BeamShape(q1,q2,xy,q4,L,x),XYPos1).val .-L/2,x)
+lines!(lift(xy->BeamShape(q1,q2,xy,q4,L,x, L/2),XYPos1),x, linewidth=12)   #first level right column
+lines!(lift(xy->BeamShape(q1,q2,xy,q4,L,x, -L/2),XYPos1),x, linewidth=12) #first level left column
 
-# w2=lift(xy->BeamShape(q1,q2,xy,q4,L,x),XYPos2)
-lines!(lift(xy->BeamShape(q1,q2,xy,q4,L,x),XYPos2).val .+L/2,x .+L)
-lines!(lift(xy->BeamShape(q1,q2,xy,q4,L,x),XYPos2).val .-L/2,x .+L)
-
-
+lines!(lift((xy1, xy2)->BeamShape(q1,q2,xy2,q4,L,x,L/2+xy1),XYPos1,XYPos2),x .+L, linewidth=6) #second level right column
+lines!(lift((xy1, xy2)->BeamShape(q1,q2,xy2,q4,L,x,-L/2+xy1),XYPos1,XYPos2),x .+L, linewidth=6) #second level left column
 
 #animate
-#adjust step in loop to match actual time with animation time
-record(scene1, "animation.mp4", range(1, stop = length(u1), step=10)) do i
 
-    # val, looptime, bytes, gctime, memallocs=@timed begin  #measure time for each loop
+record(scene1, "animation.mp4", range(1, stop = length(u1), step=1)) do i
+
+    if i==1
+        sleep(1)
+    end
+
     XYPos1[]=(u1[i])
     XYPos2[]=(u2[i])
+    sleep(1/24)
 
 end
