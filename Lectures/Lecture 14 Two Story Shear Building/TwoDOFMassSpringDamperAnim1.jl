@@ -12,8 +12,8 @@ m2 = 4000/2.281  #kg   #second floor (or roof), 10 psf dead load
 E=2E+11  #N/m^2
 Ic=723/12^4/3.281^4  #m^4   #W14x68 steel column, strong axis
 L=13/3.281  #m  column height
-k1 = 12*E*2*Ic/L^3
-k2 = 12*E*Ic/L^3
+k1 = 12*E*4*Ic/L^3
+k2 = 12*E*2*Ic/L^3
 
 #two viscous dampers
 c1 = 0.0
