@@ -58,22 +58,26 @@ u2=(x->x[4]).(sol.u)
 
 t=sol.t
 
-#plot displacement over time
-plot(t,u1,linewidth=1,xaxis="t [sec.]",yaxis="u(t) [m]",label="u1")
-plot!(t,u2,linewidth=1,xaxis="t [sec.]",yaxis="u(t) [m]",label="u2")
 
-
-#make some plots
+#animate the 2 DOF dynamic system
 using Makie
 
+
+#offset mass1 and mass2 from each other
+
+u1=u1 .+ 3.0
+u2=u2 .+ 6.0
+
+
 #define initial position for mass-spring animation
-XYPos1=Node((u[1],0))
+XYPos1=Node((u1[1],0))
+XYPos2=Node((u2[1],0))
 
 #define window and limits
 scene1=Scene(resolution=(1000,500))
-Xmin=minimum([u1;u2])
+Xmin=minimum([u1;u2])-1.0
 Ymin=-1
-Xmax=maximum([u1;u2)
+Xmax=maximum([u1;u2])+1.0
 Ymax=1
 Xrange=Xmax-Xmin
 Yrange=Ymax-Ymin
@@ -81,41 +85,17 @@ limits = FRect(Xmin, Ymin, Xrange, Yrange)
 
 #show mass
 scatter!(scene1, lift(xy->Point2f0[xy],XYPos1), show_axis = false, marker = [:rect], limits=limits, color= :red, markersize=0.5)
-
-
-# #define window and limits
-# scene2=Scene(resolution=(1000,500))
-# Xmin=minimum(t)
-# Ymin=minimum(u)
-# Xmax=maximum(t)
-# Ymax=maximum(u)
-# Xrange=Xmax-Xmin
-# Yrange=Ymax-Ymin
-# limits = FRect(Xmin, Ymin, Xrange, Yrange)
-#
-# #plot the whole response
-# lines!(scene2, t,u, limits=limits, color= :blue)
-#
-# axis=scene2[Axis]
-#
-# axis[:names, :axisnames] = ("time [sec.]", "u [m]")
-#
-# #show pointer
-# scatter!(scene2, lift(xy->Point2f0[xy],XYPos2), marker = [:circle], limits=limits, color= :red, markersize=2)
-#
-#
-# #group the scenes
-# scene3=vbox(scene2,scene1)
+scatter!(scene1, lift(xy->Point2f0[xy],XYPos2), show_axis = false, marker = [:rect], limits=limits, color= :blue, markersize=0.5)
+lines!([0, 0], [-1, 1], color= :black)
+lines!([3, 3], [-1, 1], color= :red)
+lines!([6, 6], [-1, 1], color= :blue)
 
 #animate
 #adjust step in loop to match actual time with animation time
-record(scene1, "animation.mp4", range(1, stop = length(u), step=4)) do i
+record(scene1, "animation.mp4", range(1, stop = length(u1), step=3)) do i
 
     # val, looptime, bytes, gctime, memallocs=@timed begin  #measure time for each loop
-    XYPos1[]=(u[i],0)
-    # XYPos2[]=(t[i],u[i])
-    # end
-
-    # sleep(dt-looptime)  #hold to correct loop time to 'real' time in animation
+    XYPos1[]=(u1[i],0)
+    XYPos2[]=(u2[i],0)
 
 end
