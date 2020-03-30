@@ -173,6 +173,7 @@ CumulativeEnergyD=accumulate(+, dEnergyD)
 #calculate initial velocity from blast
 plot(t,du)
 duMax=maximum(du)  #m/s^2,
+plot(t,du)
 
 #compare to inertial energy calculated from m*ddu
 plot(t,CumulativeEnergyI,xaxis="t (sec.)",yaxis="CeI, N-m")

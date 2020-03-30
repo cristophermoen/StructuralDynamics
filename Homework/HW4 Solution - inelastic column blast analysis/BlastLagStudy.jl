@@ -138,5 +138,5 @@ fD=c*du
 
 
 #plot D'Alembert's forces vs. time
-plot(t,fI,xaxis="t (sec.)",yaxis="fI, N")
-plot!(t,fS,xaxis="t (sec.)",yaxis="fS, N")
+plot(t,fI,xaxis="t (sec.)",yaxis="f, N", label="fI")
+plot!(t,fS,xaxis="t (sec.)",yaxis="f, N", label="fS")
