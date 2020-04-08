@@ -90,10 +90,16 @@ t=sol.t
 #animate the three story shear building
 #show floors and walls
 
+
+
+
+
+# **********
 using Makie
 
 # function PlotShearBuilding(t, u1, u2, u3, L, m)
 
+L=h
 
 
 #define window and limits
