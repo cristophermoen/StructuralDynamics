@@ -24,7 +24,7 @@ pt2Spline = Spline1D(t2,pt2)
 t3 = 0:0.01:3 #seconds
 a3 = 0.0
 ω3 = 1.0
-pt3 = a2*cos.(ω3*t3)
+pt3 = a3*cos.(ω3*t3)
 pt3Spline = Spline1D(t3,pt3)
 
 #write equation of motion function
@@ -41,7 +41,7 @@ function mdof(ddu, du, u, p, t)
 
 end
  #                                    u_dot0      u_0     trange
-  prob = SecondOrderODEProblem(mdof, [0.; 0.; 0.], [1.0; 0.0; 0.0], (0.,10.),(M, C, K, pt1Spline, pt2Spline, pt3Spline))
+  prob = SecondOrderODEProblem(mdof, [0.; 0.; 0.], [0.0; 0.0; 0.0], (0.,10.),(M, C, K, pt1Spline, pt2Spline, pt3Spline))
   sol = solve(prob, DPRKN6(),tstops=0:0.01:10)
 
 u1_dot=(x->x[1]).(sol.u)
