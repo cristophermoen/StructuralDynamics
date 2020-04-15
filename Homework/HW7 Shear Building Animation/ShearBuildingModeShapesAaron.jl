@@ -1,5 +1,5 @@
 using LinearAlgebra   #for eig function
-using Makie   #to show mode shapes
+# using Makie   #to show mode shapes
 
 #show vibration mode shapes for a three story shear building
 
@@ -54,32 +54,39 @@ Mn1=transpose(ϕn1)*M*ϕn1
 
 qn10=transpose(ϕn1)*M*u0/Mn1
 
-t=0.0:0.01:3
+t=0.0:0.01:3.0
+
+
 qn1=qn10.*cos.(wn[1]*t)
 
 
 Mode1Contribution=zeros(3,length(t))
+
 for i=1:length(t)
     Mode1Contribution[:,i]=qn1[i]*ϕn1
 end
 
-Mode2Contribution=zeros(3,length(t))
-for i=1:length(t)
-    Mode2Contribution[:,i]=qn2[i]*ϕn2
-end
+# Mode2Contribution=zeros(3,length(t))
+# for i=1:length(t)
+#     Mode2Contribution[:,i]=qn2[i]*ϕn2
+# end
+#
+# Mode3Contribution=zeros(3,length(t))
+# for i=1:length(t)
+#     Mode3Contribution[:,i]=qn3[i]*ϕn3
+# end
+#
+# #compare this to HW6
+# Total=Mode1Contribution+Mode2Contribution+Mode3Contribution
 
-Mode3Contribution=zeros(3,length(t))
-for i=1:length(t)
-    Mode3Contribution[:,i]=qn3[i]*ϕn3
-end
+using Plots
+#certain floor
 
-#compare this to HW6
-Total=Mode1Contribution+Mode2Contribution+Mode3Contribution
+plot(t,Mode1Contribution[1,:])
 
-#certain floor  
-plot(t,Mode1Contribution)
-plot!(t,Mode2Contribution)
-plot!(t,Mode3Contribution)
+
+# plot!(t,Mode2Contribution)
+# plot!(t,Mode3Contribution)
 
 
 #normalize the mode
