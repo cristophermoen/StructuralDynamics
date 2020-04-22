@@ -260,7 +260,7 @@ function CalculateGlobalK(MemberDefinitions, SectionProperties, MaterialProperti
     FreeDOF = DefineFreeDOF(Supports)
     K=GlobalK[FreeDOF,FreeDOF]
 
-    return K
+    return K, FreeDOF
 
 end
 
@@ -293,6 +293,6 @@ function CalculateGlobalM(MemberDefinitions, SectionProperties, MaterialProperti
     FreeDOF = DefineFreeDOF(Supports)
     M=GlobalM[FreeDOF,FreeDOF]
 
-    return M
+    return M, FreeDOF
 
 end
