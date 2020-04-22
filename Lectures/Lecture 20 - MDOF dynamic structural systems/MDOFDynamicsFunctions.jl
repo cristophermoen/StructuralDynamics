@@ -204,8 +204,8 @@ function AssembleGlobalMatrix(NodeGeometry,MemberDefinitions,eGlobal)
         iNode=MemberDefinitions[i][1]
         jNode=MemberDefinitions[i][2]
 
-        iNodeDOF=[1;2;3] .+(i-1)*3
-        jNodeDOF=[4;5;6] .+(i-1)*3
+        iNodeDOF=[1;2;3] .+(iNode-1)*3
+        jNodeDOF=[1;2;3] .+(jNode-1)*3
 
         GlobalElementDOF=[iNodeDOF;jNodeDOF]
 
