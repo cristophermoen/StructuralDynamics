@@ -121,20 +121,47 @@ pt1 = a1*sin.(ω1*t1)
 pt1Spline = Spline1D(t1,pt1)
 pt1DOF=findfirst(x->x==26, FreeDOF)  #vector location of load
 
+
+#define pedestrian load at node 11
+#the vertical DOF number for node 11 is 32
+#at DOF 32
+tFirst = 0:0.01:4.9 #seconds
+ptFirst=zeros(length(tFirst))
+tSecond=5:0.01:15 #seconds
+a1 = 1.0
+ω1 = 1.0
+ptSecond=a1*sin.(ω1*tSecond)
+tThird=15.01:0.01:60
+ptThird=zeros(length(tThird))
+tAll=[tFirst;tSecond;tThird]
+ptAll=[ptFirst;ptSecond;ptThird]
+pt2Spline = Spline1D(tAll,ptAll)
+pt2DOF=findfirst(x->x==32, FreeDOF)  #vector location of load
+
+# using Plots
+# plot(tAll,pt2Spline(tAll))
+# plot(tAll,ptAll)
+
+#
+# pt=zeros(size(M)[1])
+#     pt[pt2DOF]=pt2Spline(60.0)
+
+
 #write equation of motion function
 function mdof(ddu, du, u, p, t)
 
-    M, C, K, pt1Spline,pt1DOF = p
+    M, C, K, pt1Spline, pt1DOF, pt2Spline, pt2DOF = p
 
     pt=zeros(size(M)[1])  #define vector of all the pts at each free DOF
 
     pt[pt1DOF]=pt1Spline(t[1])  #assign load to node 9, vertical DOF
+    pt[pt2DOF]=pt2Spline(t[1])  #assign load to node 11, vertical DOF
 
     ddu[:,1] = -inv(M)*C*du[:,1] - inv(M)*K*u[:,1] + inv(M)*pt[:,1]
 
 end
  #                                    u_dot0       u_0         trange
-  prob = SecondOrderODEProblem(mdof, zeros(size(M)[1]), zeros(size(M)[1]), (0.,60.),(M, C, K, pt1Spline, pt1DOF))
+  prob = SecondOrderODEProblem(mdof, zeros(size(M)[1]), zeros(size(M)[1]), (0.,60.),(M, C, K, pt1Spline, pt1DOF, pt2Spline, pt2DOF))
   sol = solve(prob, DPRKN6(),tstops=0:0.01:60)
 
   t=sol.t
