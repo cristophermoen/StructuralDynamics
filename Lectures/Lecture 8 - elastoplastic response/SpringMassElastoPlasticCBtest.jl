@@ -25,7 +25,7 @@ fn=ωn/(2*pi)  #cycles per second
 Tn=1/fn       #period, seconds
 
 #forcing function
-a=20000 #N
+a=10000 #N
 ω=0.2*ωn  #radians/sec.
 
 #define arbitrary function
@@ -53,7 +53,8 @@ spl = Spline1D(tArb,fArb)
 
 
 #define elastoplastic response
-uy=0.30  #yield displacement, meters
+
+uy=0.3  #yield displacement, meters
 
 #set up global variables to track inelastic SDOF response
 global up=0.0   #initialize plastic displacement, note global variable designation so that up is updated inside the SDOF function
@@ -61,12 +62,12 @@ global i=1   #counter for tracking fs
 global fs_all=zeros(300000)   #define fs tracking vector, make vector really long to accommodate all the Julia time steps
 global u_all=zeros(300000)   #define u tracking vector
 global t_all=zeros(300000)   #define t tracking vector
-global up_all=zeros(300000)   #define up tracking vector
 
+fs=1.0
 
 #write equation of motion
 function SpringMassDamperEOM(ddu,du,u,p,t)
-    m, k, c, a, ω, F, spl, uy  = p
+    m, k, c, a, ω, F, spl, uy, fs  = p
 
     #harmonic forcing function
     ptForcing=a*sin(ω*t[1])
@@ -87,22 +88,18 @@ function SpringMassDamperEOM(ddu,du,u,p,t)
     else
           fs=k*uy*sign(u[1]-up)   #calculate fs when displacement is plastic, on horizontal part of the curve
           global up=u[1]-uy*sign(u[1]-up)   #define how much plastic displacement occurs within a timestep and keep track of it globally
-          #up can be positive or negative and it is calculated cumulatively
-          #plastic deformation to the right is positive, deformation to the left is negative
-
     end
 
       global fs_all[i]=fs
       global u_all[i]=u[1]
       global t_all[i]=t[1]
-      global up_all[i]=up
       global i=i+1
 
     ddu[1] = -c/m*du[1] - fs/m + ptForcing/m -F*SignF/m + ptArb/m
 end
 
 #solver controls
-dt=0.1 #seconds
+dt=0.01 #seconds
 totalt=10 #seconds
 
 #define initial conditions
@@ -110,7 +107,7 @@ uo=0.5*a/k  #meters
 duo=ωn*a/k #m/sec.
 
 #solve the ODE
-prob = SecondOrderODEProblem(SpringMassDamperEOM, [duo], [uo], (0.,totalt), (m, k, c, a, ω, F, spl,uy))
+prob = SecondOrderODEProblem(SpringMassDamperEOM, [duo], [uo], (0.,totalt), (m, k, c, a, ω, F, spl,uy, fs))
 sol = solve(prob, DPRKN6(),tstops=0:dt:totalt)
 
 #separate out u(t),du(t), and t from solution
@@ -122,7 +119,6 @@ t=sol.t
 t_all=t_all[1:i-1]
 u_all=u_all[1:i-1]
 fs_all=fs_all[1:i-1]
-up_all=up_all[1:i-1]
 
 
 #make some plots
