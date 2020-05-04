@@ -15,13 +15,13 @@ MaterialProperties = [(1.0, 1.0),    #steel
                       (1E+5, 3000)]     #concrete
 
 #x y
-NodeGeometry = [0.0  0.0;
-                12.0 0.0;
-                24.0 0.0]
+NodeGeometry = [0.0  0.0;   #Node 1
+                12.0 0.0;   #Node 2
+                24.0 0.0]   #Node 3
 
 #iNode  jNode SectionProperties MaterialProperties
-MemberDefinitions = [(1, 2, 1, 1),
-                     (2, 3, 1, 1)]
+MemberDefinitions = [(1, 2, 1, 1),   #Member 1
+                     (2, 3, 1, 1)]   #Member 2
 
           # node number, DOF u=1 v=2 ϕ=3
 Supports = [(1,1),
