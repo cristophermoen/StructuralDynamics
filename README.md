@@ -1,6 +1,8 @@
 # EN 560.630 Structural Dynamics
 Department of Civil and Systems Engineering
+
 Johns Hopkins University
+
 Fall 2021
 
 In this course you will learn how to describe and model the behavior of objects in motion (think buildings in an earthquake, active control of UAVs, a car skidding around a curve, floating particles) with classical and computational methods.
