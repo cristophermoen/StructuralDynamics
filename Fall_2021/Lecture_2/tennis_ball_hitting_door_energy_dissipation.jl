@@ -42,20 +42,29 @@ k_no_contact = 0.0;
 u_impact = (x_door - d_ball/2);
 
 
+kinetic_energy = 1/2 * m * ut_o[1]^2
+
+u_ball_max = 0.01
+
+Fd = 0.01 * kinetic_energy/(0.5 * u_ball_max)
+
+kappa = Fd/u_ball_max 
+
+
 #' Let's start defining our model in the Julia language.
 
 #' Initialize the system stiffness.
 k = k_no_contact;
 
 #' Package up the important physical parameters.
-p = [k, m, u_impact];
+p = [k, m, u_impact, kappa];
 
 #' Define the equation of motion.  The acceleration is $u_{tt}$, the velocity is $u_{t}$, the displacement is $u$, all at time $t$.  When $k = 0$, the equation of motion defaults to $m \ddot u = 0$ which is the case when the ball is not in contact with the door.
 function equation_of_motion(utt, ut, u, p, t)
 	
-    k, m, u_impact = p
+    k, m, u_impact, kappa = p
 
-	utt[1] = -k/m * (u[1] .- u_impact)
+	utt[1] = -k/m * (u[1] .- u_impact) - kappa/m * ((u[1] .- u_impact))
 
 end;
 
