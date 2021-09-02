@@ -32,24 +32,34 @@ m = 0.0577; #kg
 
 #' When the tennis ball hits the door, assume the tennis ball deforms like a spring.
 
-#' Define the tennis ball spring constant.
+#' Define the tennis ball spring constant. Assume the ball has an elastic stiffness of 10 lbs / 0.7 in.   
 k_ball = 0.01* 4.448 *1000 / (0.7 * 25.4/1000); #N/m
 
 #' When the ball is not in contact with the door, set the spring constant to zero.
 k_no_contact = 0.0;
 
-#' The equation of motion when the ball is in contact with the door is $m \ddot u + k(u - u_{impact}) = 0$.   The spring acts in a coordinate system relative to the center of the tennis ball, and so the global ball movement $u$ needs to be subtracted by the distance to the door.  Let's call this term $u_{impact}$.'
-u_impact = (x_door - d_ball/2);
+#' Consider some energy dissipation when the tennis ball hits the door.  This model will assume that some percentage of the ball's kinetic energy is dissipated while in contact with the door.
 
-
+#' Calculate the ball kinetic energy before it hits the wall.
 kinetic_energy = 1/2 * m * ut_o[1]^2
 
-u_ball_max = 0.01
+#' Make an assumption for how much the ball deforms when it hits the door.  
+max_ball_deformation = 0.005  #m
 
-Fd = 0.01 * kinetic_energy/(0.5 * u_ball_max)
+#' Assume displacement proportional energy dissipation as the ball hits the door. 
 
-kappa = Fd/u_ball_max 
+#' Define the amount of energy to be dissipated.
+E_diss = 0.10 * kinetic_energy  #N-m
 
+#' We will consider this energy dissipation as a force multiplied by the ball's deformation.  This is displacement proportional damping.
+
+#' Half of the energy is dissipated from the time when the door contacts the wall to when the ball's velocity is zero.  When the ball rebounds, assume the other half of the E_diss is consumed.  This is why there is a divide by 2 below.
+Fd = E_diss/(1/2 * max_ball_deformation) / 2   #N
+
+#' We need the slope κ of the damping force vs. ball deformation curve for displacement proportional damping.   
+κ = Fd/max_ball_deformation  #N/m
+
+#' The equation of motion when the ball is in contact with the door is then $m \ddot u + ku{ball_def} + κ * u_{ball_def} = 0$ when $\dot u > 0$ and $m \ddot u + ku{ball_def} - κ * u_{ball_def} = 0$ when $\dot u < 0$.  This means that for either direction that the ball is moving (towards the door or away from the door) that energy is being dissipated.  You can understand this better by drawing the free body diagram of the ball at different times.  See Chopra Figure 1.5.1 for an example.'
 
 #' Let's start defining our model in the Julia language.
 
@@ -57,14 +67,33 @@ kappa = Fd/u_ball_max
 k = k_no_contact;
 
 #' Package up the important physical parameters.
-p = [k, m, u_impact, kappa];
+p = [k, m, κ, x_door, d_ball];
 
-#' Define the equation of motion.  The acceleration is $u_{tt}$, the velocity is $u_{t}$, the displacement is $u$, all at time $t$.  When $k = 0$, the equation of motion defaults to $m \ddot u = 0$ which is the case when the ball is not in contact with the door.
+#' Define the equation of motion.  The acceleration is $u_{tt}$, the velocity is $u_{t}$, the displacement is $u$, all at time $t$.'
+
 function equation_of_motion(utt, ut, u, p, t)
 	
-    k, m, u_impact, kappa = p
+    k, m, κ, x_door, d_ball = p
 
-	utt[1] = -k/m * (u[1] .- u_impact) - kappa/m * ((u[1] .- u_impact))
+    if k == 0.0
+
+        utt[1] = 0.0   #tennis ball is not in contact with the door
+
+    elseif k > 0.0
+
+        ball_deformation = u[1] .- (x_door - d_ball/2)
+
+        if (ut[1] > 0.0)
+
+    	    utt[1] = -k/m * ball_deformation - κ/m * ball_deformation   #tennis ball is moving towards the door surface
+
+        else
+
+            utt[1] = -k/m * ball_deformation + κ/m * ball_deformation  #tennis ball is moving away from the door surface
+
+        end
+
+    end
 
 end;
 
@@ -106,19 +135,21 @@ cbs = CallbackSet(cb1, cb2);
 #' Now we can build our model.   
 prob = SecondOrderODEProblem(equation_of_motion, ut_o, u_o, (0.0, 2.0), p);
 
-#' And solve.
-solution = solve(prob, DPRKN6(), callback=cbs);
+#' And solve.   I had to tell the solver to use small timesteps to get an accurate solution, see the tstops command below.
+solution = solve(prob, DPRKN6(), callback=cbs, tstops=0:0.001:2.0);
 
 #' And plot.  
 using Plots
 plot(solution)
 
-# t=solution.t
+#' Calculate the maximum ball deformation.
 
+#' First pull out the displacement vector from the solution object.
+u = (x->x[2]).(solution.u)
 
-# ut=(x->x[1]).(solution.u)
+#' Calculate the maximum displacement.
+u_max = maximum(u)
 
-
-# u=(x->x[2]).(solution.u)
-
+#' This is the maximum ball displacement.  It is consistent with the max_ball_deformation magnitude we assumed when defining the energy dissipation model. 
+max_ball_deformation = u_max - u_impact
 

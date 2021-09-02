@@ -32,8 +32,8 @@ m = 0.0577; #kg
 
 #' When the tennis ball hits the door, assume the tennis ball deforms like a spring.
 
-#' Define the tennis ball spring constant.
-k_ball = 0.01* 4.448 *1000 / (0.7 * 25.4/1000); #N/m
+#' Define the tennis ball spring constant.  Assume the ball has an elastic stiffness of 10 lbs / 0.7 in.   
+k_ball = 0.01* 4.448 * 1000 / (0.7 * 25.4/1000); #N/m
 
 #' When the ball is not in contact with the door, set the spring constant to zero.
 k_no_contact = 0.0;
@@ -104,12 +104,10 @@ solution = solve(prob, DPRKN6(), callback=cbs);
 using Plots
 plot(solution)
 
-# t=solution.t
+#' This model obviously doesn't work well.   Let's try in a different script to add some energy dissipation when the ball hits the door.
 
 
-# ut=(x->x[1]).(solution.u)
 
 
-# u=(x->x[2]).(solution.u)
 
 
