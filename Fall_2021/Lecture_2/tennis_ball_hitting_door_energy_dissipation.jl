@@ -98,6 +98,9 @@ function equation_of_motion(utt, ut, u, p, t)
 end;
 
 #' We need tell our model when $k$ changes.  The first condition is when the ball hits the door, and this occurs when the distance the ball has traveled is greater than or equal to $u_{impact}$.
+
+u_impact = x_door - (d_ball/2)
+
 function ball_hits_door(u,t,integrator) 
 
     u[2] >= u_impact
