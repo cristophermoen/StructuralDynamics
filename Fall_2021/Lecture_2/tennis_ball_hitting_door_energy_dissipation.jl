@@ -156,3 +156,15 @@ u_max = maximum(u)
 #' This is the maximum ball displacement.  It is consistent with the max_ball_deformation magnitude we assumed when defining the energy dissipation model. 
 max_ball_deformation = u_max - u_impact
 
+#' How much kinetic energy is lost on the rebound?  We assume above that the ball loses 10% of its kinetic energy as it impacts the door.
+
+ut = (x->x[1]).(solution.u)  #ball velocity
+ut_after_wall = ut[end]      #ball velocity after it hits the wall
+
+kinetic_energy_after_wall = 1/2 * m * ut_after_wall^2
+
+Δ_kinetic_energy = kinetic_energy - kinetic_energy_after_wall
+
+percent_change_kinetic_energy = Δ_kinetic_energy / kinetic_energy
+
+#' It turns outs that the ball loses 8% of its kinetic energy which is pretty close to the 10% we assumed.
