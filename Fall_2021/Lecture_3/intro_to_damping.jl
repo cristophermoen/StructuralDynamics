@@ -8,7 +8,7 @@
 
 using DifferentialEquations
 
-#' Let's explore damping in structures. As [Chopra]() says, there can be many different energy dissipating mechanisms that act simulataneously.  There are few popular ones: viscous damping, friction damping, and material damping.  Let's explore them.
+#' Let's explore damping in structures. As [Chopra](https://www.pearson.com/us/higher-education/program/Chopra-Dynamics-of-Structures-5th-Edition/PGM1101746.html) says, there can be many different energy dissipating mechanisms that act simulataneously.  There are few popular ones: viscous damping, friction damping, and material damping.  Let's explore them.
 
 
 #' # Viscous damping
@@ -33,7 +33,7 @@ ut_o = [0.0]
 u_o = [15.0/1000] #mm
 
 #' Assume a viscous damping coefficient by scaling the mass.  The coefficient $c$ has units of kg/sec.
-c = 1.0 * m
+c = 100.0 * m
 
 #' Package up the important physical parameters.
 p = [k, m, c];
@@ -78,7 +78,7 @@ g = 9.8 #m/s^2
 normal_force = m * g 
 
 #' Assume there is a friction force working to dissipate energy in the building (maybe from the shear walls?).  Define this force as a ratio of the total normal force of the building (maybe not so physically meaningful).
-fd_friction = 0.01 * normal_force
+fd_friction = 0.1 * normal_force
 
 #' Package up the important physical parameters.
 p = [k, m, fd_friction];
