@@ -91,6 +91,15 @@ solution = solve(prob, DPRKN6(), tstops=0:0.001:1.0);
 
 #' And plot.
 using Plots
+
+u = [solution.u[i][2] for i=1:1008]
+
+dt = diff(solution.t)
+
+ut = [solution.u[i][1] for i=1:1008]
+
+utt_approx = [0.0; diff(ut) ./ dt]
+
 u = (x->x[2]).(solution.u)  #displacement
 plot(solution.t, u, legend = false, xlabel="time [seconds]", ylabel = "lateral disp. u [m]")
 
