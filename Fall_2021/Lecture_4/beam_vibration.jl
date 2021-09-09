@@ -132,26 +132,26 @@ t0_stencil = 0.0 .* dt
 stencil_2_forward = calculate_weights(order, t0_stencil, t_stencil)
 stencil_2_backward = reverse(stencil_2_forward)
 
-#' Define B_sub
-B_sub = zeros(Float64, (num_timesteps, num_timesteps))
+# #' Define B_sub
+# B_sub = zeros(Float64, (num_timesteps, num_timesteps))
 
-for i = 1:num_timesteps
+# for i = 1:num_timesteps
 
-    if i == 1
+#     if i == 1
 
-        B_sub[i,1:3] .= stencil_2_forward
+#         B_sub[i,1:3] .= stencil_2_forward
 
-    elseif i == num_timesteps
+#     elseif i == num_timesteps
 
-        B_sub[i,end-2:end] .= stencil_2_backward
+#         B_sub[i,end-2:end] .= stencil_2_backward
 
-    else
+#     else
 
-        B_sub[i,i-1:i+1] .= stencil_2
+#         B_sub[i,i-1:i+1] .= stencil_2
 
-    end
+#     end
 
-end
+# end
 
 
 #' Define the operator matrix [B].
