@@ -99,7 +99,7 @@ fixed_dof_sub = [1, num_nodes]
 #' Define all the dof in A_sub.  
 all_dof_sub = 1:num_nodes
 
-#' Therefore the free dof in A_sub is...
+#' Therefore the free dof in A_sub are...
 free_dof_sub = setdiff(all_dof_sub, fixed_dof_sub)
 num_free_dof_sub = length(free_dof_sub)
 
@@ -131,28 +131,6 @@ t_stencil = (0.0:1.0:2.0) .* dt
 t0_stencil = 0.0 .* dt 
 stencil_2_forward = calculate_weights(order, t0_stencil, t_stencil)
 stencil_2_backward = reverse(stencil_2_forward)
-
-# #' Define B_sub
-# B_sub = zeros(Float64, (num_timesteps, num_timesteps))
-
-# for i = 1:num_timesteps
-
-#     if i == 1
-
-#         B_sub[i,1:3] .= stencil_2_forward
-
-#     elseif i == num_timesteps
-
-#         B_sub[i,end-2:end] .= stencil_2_backward
-
-#     else
-
-#         B_sub[i,i-1:i+1] .= stencil_2
-
-#     end
-
-# end
-
 
 #' Define the operator matrix [B].
 B = zeros(Float64, (num_nodes*num_timesteps, num_nodes*num_timesteps))
