@@ -88,10 +88,10 @@ using Dierckx
 wind_load_function = Spline1D(t_dist_start:dt_dist:t_dist_end, wind_load_over_time)
 
 #' Package up the important physical parameters.
-p = [k, m, c, ω, wind_load_function];
+p = [k, m, c, wind_load_function];
 
 #' Build our model. 
-prob = SecondOrderODEProblem(equation_of_motion, ut_o, u_o, (t_start, t_end), (m, k, c, wind_load_function));
+prob = SecondOrderODEProblem(equation_of_motion, ut_o, u_o, (t_start, t_end), p);
 
 #' And solve.  
 solution = solve(prob, DPRKN6(), tstops=t_start:dt:t_end);
@@ -99,7 +99,7 @@ solution = solve(prob, DPRKN6(), tstops=t_start:dt:t_end);
 #' And plot.
 using Plots
 u = (x->x[2]).(solution.u)  #displacement
-plot(solution.t, u, legend = false, xlabel="time [seconds]", ylabel = "beam disp. u [m]")
+plot(solution.t, u, legend = false, xlabel="time [seconds]", ylabel = "u [m]")
 
 
 
