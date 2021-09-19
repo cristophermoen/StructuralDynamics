@@ -13,7 +13,9 @@ using DifferentialEquations
 
 #' Units are kg, meters, seconds, and Newtons.
 
-#' Assume a unidirectional coordinate system in $y$ where $y=0$ is the ground.
+#' Assume a unidirectional coordinate system in $u$ where $u=0$ is the ground.
+
+#' ![Figure 1](/Users/crismoen/.julia/dev/StructuralDynamics/Fall_2021/Homework_solutions/HW1/coord_sys_schematic.png)
 
 #' Define the tennis ball diameter.
 d_ball = 0.068 #m;
@@ -39,6 +41,8 @@ k_ball = 0.01* 4.448 *1000 / (0.7 * 25.4/1000); #N/m
 k_no_contact = 0.0;
 
 #' Consider some energy dissipation when the tennis ball hits the ground.  This model will assume that some percentage of the ball's kinetic energy is dissipated while in contact with the ground.
+
+#' ![Figure 2](/Users/crismoen/.julia/dev/StructuralDynamics/Fall_2021/Homework_solutions/HW1/energy_model.png)
 
 #' Calculate the ball energy before it hits the ground.
 potential_energy = m * -g * u_o[1]   #need negative sign here!
@@ -120,7 +124,7 @@ function ball_leaves_ground(u,t,integrator)
 
 end;
 
-#' And the action is that k goes back to zero.
+#' And the action is that $k$ goes back to zero.
 function ball_leaves_ground_action!(integrator)
 
     integrator.p[1] = 0.0  
