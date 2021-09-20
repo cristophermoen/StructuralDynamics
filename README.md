@@ -18,7 +18,7 @@ In this course you will learn how to describe and model the behavior of objects 
 * **Damping and energy dissipation**
     * Steel material damping at the microscale
 * **Harmonic excitation**
-    * Tall building tuned mass damper design for wind loadings
+    * Random wind loading on a telescope
 * **Impulse loadings**
     * Design for blast loadings
 * **Numerical ODE solutions: Central Difference  Method, Runge-Kutta**
@@ -34,3 +34,7 @@ In this course you will learn how to describe and model the behavior of objects 
 * **System identification**
     * Find crack in a bridge
 
+
+# Homework Solutions:
+
+* [Tennis ball bouncing on the ground](https://github.com/cristophermoen/StructuralDynamics/blob/6bc2e59da48f118c1aa6cc563cce2d382219ab73/Fall_2021/Homework_solutions/HW1/HW1_ball_bouncing.html)
