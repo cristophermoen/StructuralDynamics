@@ -45,7 +45,7 @@ k_no_contact = 0.0;
 #' ![Figure 2](/Users/crismoen/.julia/dev/StructuralDynamics/Fall_2021/Homework_solutions/HW1/energy_model.png)
 
 #' Calculate the ball energy before it hits the ground.
-potential_energy = m * -g * u_o[1]   #need negative sign here!
+potential_energy = m * g * -u_o[1]   #need negative sign here, change in displacement 
 
 #' Make an assumption for how much the ball deforms when it hits the ground the first time.  From preliminary model runs, this deformation magnitude seems to make sense.  20 mm is believable for a 2 meter drop.  This is a little less than half it's diameter.      
 max_ball_deformation = 0.020  #m
@@ -110,7 +110,7 @@ function ball_hits_ground(u,t,integrator)
 
 end;
 
-#' The action caused by this condition, when the ball becomes in contact with the ground, is that $k=k_{ball}.  The Julia language sees $k$ as the first value in the $p$ vector.    
+#' The action caused by this condition, when the ball becomes in contact with the ground, is that $k=k_{ball}$.  The Julia language sees $k$ as the first value in the $p$ vector.    
 function ball_hits_ground_action!(integrator)
 
     integrator.p[1] = k_ball  
@@ -149,5 +149,5 @@ using Plots
 u = (x->x[2]).(solution.u)  #displacement
 t = solution.t
 plot(t, u, legend=false)
-ylims!(-1, 10)
+ylims!(-1, 5)
 
