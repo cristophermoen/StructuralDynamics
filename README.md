@@ -37,4 +37,4 @@ In this course you will learn how to describe and model the behavior of objects 
 
 # Homework Solutions:
 
-* [Tennis ball bouncing on the ground](https://github.com/cristophermoen/StructuralDynamics/blob/6bc2e59da48f118c1aa6cc563cce2d382219ab73/Fall_2021/Homework_solutions/HW1/HW1_ball_bouncing.html)
+* [Tennis ball bouncing on the ground](https://raw.githubusercontent.com/cristophermoen/StructuralDynamics/master/Fall_2021/Homework_solutions/HW1/HW1_ball_bouncing.html)
