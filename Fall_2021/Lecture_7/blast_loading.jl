@@ -34,7 +34,7 @@ function equation_of_motion(utt, ut, u, p, t)
 	
     k, m, c, blast_loading_function = p
 
-    utt[1] = -k/m * u[1] - c/m * ut[1] - blast_loading_function(t[1])/m
+    utt[1] = -k/m * u[1] - c/m * ut[1] + blast_loading_function(t[1])/m
 
 end;
 
