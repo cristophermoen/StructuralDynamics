@@ -1,4 +1,4 @@
-@def author = "The Oracle"
+@def author = "Cris Moen"
 
 @def hasplotly = false
 @def hasmdpad = false

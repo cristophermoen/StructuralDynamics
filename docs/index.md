@@ -1,40 +1,51 @@
-@def title = "Franklin Sandbox"
-@def hasmath = true
-@def hascode = true
+@def title = "Structural Dynamics"
+@def hasmath = false
+@def hascode = false
 
 
-# Franklin extended sandbox
 
-This is meant as a collection of simple examples of how you can use Franklin with other Julia libraries. It's assumed you're already familiar with the syntax (otherwise, please try the `sandbox` template).
+
+<!-- This is meant as a collection of simple examples of how you can use Franklin with other Julia libraries. It's assumed you're already familiar with the syntax (otherwise, please try the `sandbox` template).
 
 * [literate](/literate/)
 * [plotly](/plotly/)
 * [hyperscript](/hyperscript/)
 * [pyplot](/pyplot/)
 * [mdpad](/mdpad/)
-* [gr](/gr/)
+* [gr](/gr/) -->
 
-## KaTeX numbering on/off
+# EN 560.630 Structural Dynamics
+Department of Civil and Systems Engineering
 
-~~~
-<style>
-.no-number .katex-display::after {
-  counter-increment: nothing;
-  content: "";
-}
-</style>
-~~~
+Johns Hopkins University
 
-This is numbered
-$$ 1+1 = 2 $$
+Fall 2021
 
-This isn't
+In this course you will learn how to describe and model the behavior of objects in motion (think buildings in an earthquake, active control of UAVs, a car skidding around a curve, floating particles) with classical and computational methods.
 
-@@no-number
-$$ 2+2 = 4 $$
-and
-$$ 3+3 = 7-1 $$
-@@
+[Syllabus](https://docs.google.com/document/d/18JF1EAZFS4VffRKycuR3EOw6vM5FLhbzIqaC5-f1Y-c/edit?usp=sharing)
 
-Numbered again
-$$ 7 + 1 = 8 $$
+[Lecture Schedule](https://docs.google.com/spreadsheets/d/1sr4LTmwpWAT66LUEtXoE_iEBqk_eXRFrqTsM5tsSeP4/edit?usp=sharing)
+
+# Lecture Topics:
+
+* **Equations of motion, ODE solution**
+  *  Model and visualize particles in motion
+* **Damping and energy dissipation**
+    * Steel material damping at the microscale
+* **Harmonic excitation**
+    * Random wind loading on a telescope
+* **Impulse loadings**
+    * Design for blast loadings
+* **Numerical ODE solutions: Central Difference  Method, Runge-Kutta**
+    * Compare ODE solutions with different solvers
+* **Earthquake ground motions**
+    * Generate elastic response spectrum for earthquake engineering design
+* **Modeling material nonlinearity**
+    * Earthquake cracks a concrete column
+* **Vibration mode shapes**
+    * Two story building
+* **Active control**
+    * Flying a UAV
+* **System identification**
+    * Find crack in a bridge
