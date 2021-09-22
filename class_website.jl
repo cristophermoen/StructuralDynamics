@@ -1,2 +1,2 @@
 using Franklin
-newsite("docs", template="pure-sm")
+newsite("docs", template="sandbox-extended")
