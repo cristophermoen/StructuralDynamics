@@ -47,7 +47,7 @@ c = ξ * c_cr  #kg/sec
 
 #' Define the harmonic forcing function magnitude and frequency.
 po = 10000   #N
-ω = 10.0 * ωn
+ω = 0.2 * ωn
 
 #' We don't need an initial velocity or initial displacement to get the beam going since we are using a forcing function.
 ut_o = [0.0] 
