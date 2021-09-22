@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+   <link rel="stylesheet" href="/libs/highlight/github.min.css">
+   
+  
+  
+  <link rel="stylesheet" href="/css/franklin.css">
+   <title>Franklin &#43; PyPlot</title>  
+</head>
+<body>
+
+<!-- Content appended here -->
+<div class="franklin-content"><h1 id="franklin_pyplot"><a href="#franklin_pyplot" class="header-anchor">Franklin &#43; PyPlot</a></h1>
+<p>Using Franklin with PyPlot is pretty straightforward but it&#39;s always nice to have a few examples especially for the paths.</p>
+<p><strong>NOTE</strong>: if you have lots of plots on a  page, it may happen that you see a warning like:</p>
+<pre><code class="language-julia">RuntimeWarning: More than 20 figures have been opened. Figures created through
+the pyplot interface &#40;&#96;matplotlib.pyplot.figure&#96;&#41; are retained until explicitly
+closed and may consume too much memory. &#40;To control this warning, see the
+rcParam &#96;figure.max_open_warning&#96;&#41;.</code></pre>
+<p>In such a case, consider killing the server, calling <code>using PyPlot; PyPlot.close_figs&#40;&#41;</code> and restarting the server &#40;you don&#39;t need to do this, but it will make the error go away and possibly avoid slowdown.&#41;.</p>
+
+<h2 id="examples"><a href="#examples" class="header-anchor">Examples</a></h2>
+<h3 id="sincs"><a href="#sincs" class="header-anchor">Sincs</a></h3>
+
+<p><span style="color:red;">// Image matching '/assets/pyplot/code/sinc' not found. //</span></p>
+<h3 id="koch"><a href="#koch" class="header-anchor">Koch</a></h3>
+<p><a href="https://matplotlib.org/3.1.1/gallery/lines_bars_and_markers/fill.html#sphx-glr-gallery-lines-bars-and-markers-fill-py">Original script</a></p>
+
+<p><span style="color:red;">// Image matching '/assets/pyplot/code/koch' not found. //</span></p>
+<h3 id="scatterplot_histogram"><a href="#scatterplot_histogram" class="header-anchor">Scatterplot &#43; histogram</a></h3>
+<p><a href="https://matplotlib.org/3.1.1/gallery/lines_bars_and_markers/scatter_hist.html#sphx-glr-gallery-lines-bars-and-markers-scatter-hist-py">Original file</a></p>
+
+<p><span style="color:red;">// Image matching '/assets/pyplot/code/schist.svg' not found. //</span></p>
+<div class="page-foot">
+  <div class="copyright">
+    &copy; Cris Moen. Last modified: September 22, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    
+    
+        <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+  </body>
+</html>

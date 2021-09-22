@@ -1,0 +1,3 @@
+ArgumentError: Package PlotlyJS not found in current path:
+- Run `import Pkg; Pkg.add("PlotlyJS")` to install the PlotlyJS package.
+

@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+   <link rel="stylesheet" href="/libs/highlight/github.min.css">
+   
+   <script src="/libs/plotly/plotly.min.js"></script> 
+  
+    <script src="/libs/mdpad/mdpad.min.js"></script>
+    <script src="/libs/mdpad/mdpad-mithril.js"></script>
+    <script src="/libs/mdpad/mithril.min.js"></script>
+  
+  <link rel="stylesheet" href="/css/franklin.css">
+   <title>Franklin &#43; mpad</title>  
+</head>
+<body>
+
+<!-- Content appended here -->
+<div class="franklin-content"><h1 id="franklin_mpad"><a href="#franklin_mpad" class="header-anchor">Franklin &#43; mpad</a></h1>
+<ul>
+<li><p><a href="/">home</a></p>
+</li>
+</ul>
+<h2 id="mdpad_example_with_hyperscriptjl_inputs_and_mithril_outputs"><a href="#mdpad_example_with_hyperscriptjl_inputs_and_mithril_outputs" class="header-anchor"><em>mdpad</em> example with Hyperscript.jl inputs and Mithril outputs</a></h2>
+<p>This is an example <a href="https://mdpad.netlify.com">mdpad</a> page. The inputs and outputs are generated using the <a href="https://github.com/tshort/mdpad-js/blob/master/src/mdpad-mithril.js">mdpad-mithril</a> helper functions. These helper functions rely on <a href="https://mithril.js.org/">Mithril</a> and Bootstrap.</p>
+
+<p>ArgumentError: Package Hyperscript &#91;47d2ed2b-36de-50cf-bf87-49c2cf4b8b91&#93; is required but does not seem to be installed:</p>
+<ul>
+<li><p>Run <code>Pkg.instantiate&#40;&#41;</code> to install all recorded dependencies.</p>
+</li>
+</ul>
+
+<h2 id="results"><a href="#results" class="header-anchor">Results</a></h2>
+<p>Here are some results. As the inputs above change, the outputs should adjust accordingly. The plot is done with <a href="https://plot.ly/javascript/">Plotly-js</a>.</p>
+
+<div id="output"></div>
+
+
+<style>
+.control-label { padding-right: 10px;}
+</style>
+
+
+<script>
+var tbl = {
+    fruit: ["orange", "apple", "banana", "apple"],
+    k: [10, 20, 50, 99],
+}
+
+function mdpad_update() {
+    tbl["k * A"] = tbl.k.map((x) => mdpad.A * x);
+    var colors = tbl.fruit.map((x) => x == mdpad.fruit ? "green" : "purple");   
+    m.render(document.getElementById("output"), m("div",
+      mdatatable(tbl, {theadclass: "thead-dark"}),
+      m("p", "The first ", m("em", mdpad.fruit),
+        " in the table has k == ", m("b", tbl.k[tbl.fruit.indexOf(mdpad.fruit)]), "."),
+      mplotly([{x: tbl.fruit, y: tbl["k * A"], type:"bar", marker: {color: colors}}]),
+    ));
+}
+
+</script>
+
+<div class="page-foot">
+  <div class="copyright">
+    &copy; Cris Moen. Last modified: September 22, 2021. Website built with <a href="https://github.com/tlienart/Franklin.jl">Franklin.jl</a> and the <a href="https://julialang.org">Julia programming language</a>.
+  </div>
+</div>
+</div><!-- CONTENT ENDS HERE -->
+    
+    
+        <script src="/libs/highlight/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();hljs.configure({tabReplace: '    '});</script>
+
+    
+  </body>
+</html>
