@@ -9,14 +9,14 @@
 
 using DifferentialEquations
 
-#' Blast loadings are impulses with typically some small back pressure (suction).
+#' Blast loadings are impulses with typically some small back pressure (suction).]
 
 #' Let's consider a typical blast pressure record on a facade wall of a building.  I received this record from Dr. Matthew Whelan at the University of North Carolina - Charlotte.  
 
 #' The pressure record units are psi, and the time interval dt = 0.0001 seconds.
 
 using DelimitedFiles
-blast_pressure = vec(readdlm("/Users/crismoen/.julia/dev/StructuralDynamics/Fall_2021/Lecture_7/blast_pressure.txt"))  
+blast_pressure = vec(readdlm("/Users/crismoen/.julia/dev/StructuralDynamics/Fall_2021/Lecture_8/blast_pressure.txt"))  
 t = collect(range(0,length=5001,stop=0.5))  
 
 using Plots
@@ -90,4 +90,7 @@ solution = solve(prob, DPRKN6(), tstops=t_start:dt:t_end);
 #' And plot.
 using Plots
 u = (x->x[2]).(solution.u)  #displacement
+ut = (x->x[1]).(solution.u)  #velocity
 plot(solution.t, u, legend = false, xlabel="time [seconds]", ylabel = "u [m]")
+
+plot(solution.t, ut, legend = false, xlabel="time [seconds]", ylabel = "u [m]")
