@@ -38,7 +38,7 @@ using Dierckx
 earthquake = Spline1D(t_eq,utt_g)
 
 #' Package up the important physical parameters.
-p = [k, m, c, earthquake];
+p = [m, k, c, earthquake];
 
 #' Now let's write the equation of motion.
 function SpringMassDamperEOM(utt,ut,u,p,t)
