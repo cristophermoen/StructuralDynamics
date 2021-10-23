@@ -185,16 +185,21 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
             for a in eachindex(col)
                 plt1 = plot!(perm_xvals .+ col[a],yvals, linestyle = :dash, color = color_a)
             end
-            for a in eachindex(h_floors)
-                plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ perm_u_dict[t_anim[i]][a],[h_floors[a],h_floors[a]], color = color_a,linestyle = :dash)
+            if length(col) > 1
+                for a in eachindex(h_floors)
+                    plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ perm_u_dict[t_anim[i]][a],[h_floors[a],h_floors[a]], color = color_a,linestyle = :dash)
+                end
             end
             plt1 = scatter!([ground_u_dict(t_anim[i]) .+ perm_u_dict[t_anim[i]]],h_floors, markerstrokewidth=0, color = color_a)
         end
+        
         for a in eachindex(col)
             plt1 = plot!(xvals .+ col[a],yvals, color = color_b)
         end
-        for a in eachindex(h_floors)
-            plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ u_dict[t_anim[i]][a],[h_floors[a],h_floors[a]], color = color_b)
+        if length(col) > 1
+            for a in eachindex(h_floors)
+                plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ u_dict[t_anim[i]][a],[h_floors[a],h_floors[a]], color = color_b)
+            end
         end
         plt1 = scatter!(ground_u_dict(t_anim[i]) .+ u_dict[t_anim[i]],h_floors, color = color_b)
         if length(col) > 1 && length(ground_motion) > 0
@@ -210,7 +215,7 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
                 plt2_sub[ike] = scatter!([t_anim[i]],[ground_u_dict(t_anim[i])],label = false , markerstrokewidth=0, color = color_c)   
             else
                 if length(perm_deformations) > 0
-                    plt2_sub[ike] = plot!(perm_t,perm_u[DOF_disp_plot[ike]], title = "Perminant Deformation", color = color_a)
+                    plt2_sub[ike] = plot!(perm_t,perm_u[DOF_disp_plot[ike]], label = "Perminant Deformation", color = color_a)
                 end
                 plt2_sub[ike] = plot!(t,u[DOF_disp_plot[ike]], label = L"\textrm{DOF\; %$(DOF_disp_plot[ike])}", color = color_b)
                 plt2_sub[ike] = plot!([t_anim[i],t_anim[i]],[minimum(u[DOF_disp_plot[ike]])*1.1,maximum(u[DOF_disp_plot[ike]])*1.1],linestyle = :dash, label = false, color = color_c)
