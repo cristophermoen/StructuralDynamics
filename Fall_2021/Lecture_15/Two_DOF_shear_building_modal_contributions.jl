@@ -63,7 +63,7 @@ Mn1 = ϕn1' * M * ϕn1
 Mn2 = ϕn2' * M * ϕn2
 
 #' Assume the initial displacement for free vibration is equal to ϕ1 and the initial velocities of both dof are zero.
-u_o = ϕn1
+u_o = [100; 103.6]
 ut_o = [0.0; 0.0]
 
 #' Define the time range for the simulation.
@@ -97,7 +97,7 @@ Bn2 = qtn2_o/ωn[1]
 un2 = ϕn2' .* (An2 .* cos.(ωn[2].*t) .+ Bn2 .* sin.(ωn[2].*t))
 
 #' Plot.
-plot(t, u2)
+plot(t, un2)
 
 #' Define the problem.
 #'                                   u_dot0      u_0     trange
@@ -117,4 +117,4 @@ t_numerical=solution.t
 using Plots
 
 plot(t_numerical, u1_numerical)
-plot!(t, un1[:, 1])
+plot!(t, un1[:, 1] + un2[:, 1])
