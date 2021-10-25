@@ -1,4 +1,4 @@
-using LaTeXStrings, Polynomials
+using LaTeXStrings, Polynomials, ProgressMeter
 
 function BeamShape(q1,q2,q3,q4,L,x,offset)
     a0=q1
@@ -31,7 +31,7 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
         # file_name == "file_name.gif" or "file_name.mp4"
 
     t, u = displacements
-    
+
     if length(anim_settings) > 0
         fps, file_name, speed = anim_settings
     else
@@ -40,7 +40,7 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
     
     if length(perm_deformations) > 0
         perm_t, perm_u = perm_deformations
-        perm_u_merged = Vector{Vector{Float64}}(undef,length(perm_u[1]))
+        perm_u_merged = fill([],length(perm_u[1]))
         for j in eachindex(perm_u[1])
             perm_u_merged[j] = [perm_u[1][j]]
             if length(perm_u) > 1
@@ -61,7 +61,7 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
     ground_u_dict = Spline1D(ground_t, ground_u)
     
     t_anim = (t[1]:1/fps:t[end])
-    u_merged = Vector{Vector{Float64}}(undef,length(u[1]))
+    u_merged = fill([],length(u[1]))
     for j in eachindex(u[1])
         u_merged[j] = [u[1][j]]
         if length(u) > 1
@@ -91,7 +91,10 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
         col = [0]
     end
     
-    anim = @animate for i in eachindex(t_anim)
+    t_anim_end = eachindex(t_anim)[end]
+    prog = Progress(t_anim_end)
+    
+    anim = @animate for i in (1:t_anim_end)
         ys = [[0];h_floors]
         xs = ground_u_dict(t_anim[i]) .+ [[0];u_dict[t_anim[i]]]
         
@@ -107,31 +110,31 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
             perm_x1 = Vector{Vector{Float64}}(undef,length(perm_xs))
         end
         
-        for j1 in eachindex(ys[1:end-1])
-            x1[j1+1] = zeros(d_shape+1)
-            y1[j1+1] = zeros(d_shape+1)
+        for n in eachindex(ys[1:end-1])
+            x1[n] = zeros(d_shape+1)
+            y1[n] = zeros(d_shape+1)
             
-            h = ys[j1+1] - ys[j1]
-            Δ = xs[j1+1] - xs[j1]
+            h = ys[n+1] - ys[n]
+            Δ = xs[n+1] - xs[n]
             
             if length(perm_deformations) > 0
-                perm_x1[j1+1] = zeros(d_shape+1)
-                perm_Δ = perm_xs[j1+1] - perm_xs[j1]
+                perm_x1[n] = zeros(d_shape+1)
+                perm_Δ = perm_xs[n+1] - perm_xs[n]
             end
             
-            for i1 in (0:d_shape)
-                x1[j1+1][i1+1] = BeamShape(0,0,1,0,h,h*i1/d_shape,0) * Δ
-                y1[j1+1][i1+1] = h*i1/d_shape
+            for m in (0:d_shape)
+                x1[n][m+1] = BeamShape(0,0,1,0,h,h*m/d_shape,0) * Δ
+                y1[n][m+1] = h*m/d_shape
 
                 if length(perm_deformations) > 0
-                    perm_x1[j1+1][i1+1] = BeamShape(0,0,1,0,h,h*i1/d_shape,0) * perm_Δ
+                    perm_x1[n][m+1] = BeamShape(0,0,1,0,h,h*m/d_shape,0) * perm_Δ
                 end
             end    
-            xvals = [xvals;x1[j1+1] .+ (xs[j1])]
-            yvals = [yvals;y1[j1+1] .+ (ys[j1])]
+            xvals = [xvals;x1[n] .+ (xs[n])]
+            yvals = [yvals;y1[n] .+ (ys[n])]
             
             if length(perm_deformations) > 0
-                perm_xvals = [perm_xvals;perm_x1[j1+1] .+ (perm_xs[j1])]
+                perm_xvals = [perm_xvals;perm_x1[n] .+ (perm_xs[n])]
             end
         end
         
@@ -141,20 +144,25 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
             for a in eachindex(col)
                 plt1 = plot!(perm_xvals .+ col[a],yvals, linestyle = :dash, color = color_a)
             end
-            for a in eachindex(h_floors)
-                plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ perm_u_dict[t_anim[i]][a],[h_floors[a],h_floors[a]], color = color_b)
+            if length(col) > 1
+                for a in eachindex(h_floors)
+                    plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ perm_u_dict[t_anim[i]][a],[h_floors[a],h_floors[a]], color = color_a,linestyle = :dash)
+                end
             end
             plt1 = scatter!([ground_u_dict(t_anim[i]) .+ perm_u_dict[t_anim[i]]],h_floors, markerstrokewidth=0, color = color_a)
         end
+        
         for a in eachindex(col)
             plt1 = plot!(xvals .+ col[a],yvals, color = color_b)
         end
-        for a in eachindex(h_floors)
-            plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ u_dict[t_anim[i]][a],[h_floors[a],h_floors[a]], color = color_b)
+        if length(col) > 1
+            for a in eachindex(h_floors)
+                plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ u_dict[t_anim[i]][a],[h_floors[a],h_floors[a]], color = color_b)
+            end
         end
         plt1 = scatter!(ground_u_dict(t_anim[i]) .+ u_dict[t_anim[i]],h_floors, color = color_b)
         if length(col) > 1 && length(ground_motion) > 0
-            plt1 = plot!([ground_u_dict(t_anim[i]),ground_u_dict(t_anim[i])],[h_floors[end]/100,0],arrow=(:closed, 0.1),color=:black,linewidth=1,label="")
+            plt1 = plot!([ground_u_dict(t_anim[i]),ground_u_dict(t_anim[i])],[h_floors[end]/100,0],arrow=(:closed, 1),color=:black,linewidth=0.5,label="")
         end
         
         plt2_sub = Array{Any}(nothing, length(DOF_disp_plot))
@@ -166,7 +174,7 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
                 plt2_sub[ike] = scatter!([t_anim[i]],[ground_u_dict(t_anim[i])],label = false , markerstrokewidth=0, color = color_c)   
             else
                 if length(perm_deformations) > 0
-                    plt2_sub[ike] = plot!(perm_t,perm_u[DOF_disp_plot[ike]], title = "Perminant Deformation", color = color_a)
+                    plt2_sub[ike] = plot!(perm_t,perm_u[DOF_disp_plot[ike]], label = "Perminant Deformation", color = color_a)
                 end
                 plt2_sub[ike] = plot!(t,u[DOF_disp_plot[ike]], label = L"\textrm{DOF\; %$(DOF_disp_plot[ike])}", color = color_b)
                 plt2_sub[ike] = plot!([t_anim[i],t_anim[i]],[minimum(u[DOF_disp_plot[ike]])*1.1,maximum(u[DOF_disp_plot[ike]])*1.1],linestyle = :dash, label = false, color = color_c)
@@ -181,9 +189,7 @@ function anim_plot(displacements, perm_deformations, ground_motion, h_floors, DO
             plt1_sized = plot(plt1,plot(legend=false,grid=false,foreground_color_subplot=:white), layout = grid(2, 1, heights=[3/length(DOF_disp_plot), 1-3/length(DOF_disp_plot)]))
             plot(plt1_sized,plt2,layout = grid(1, 2, widths=[0.4 ,0.6]),size = (1200,200*length(DOF_disp_plot)),left_margin = 20Plots.mm)
         end
-        
-        
+        next!(prog)
     end
-    
     gif(anim, file_name, fps = fps*speed)
 end
