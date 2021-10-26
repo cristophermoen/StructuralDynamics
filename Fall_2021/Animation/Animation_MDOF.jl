@@ -119,7 +119,7 @@ function anim_plot(t_eq, displacements, perm_deformations, ground_motion, h_floo
         y1 = Vector{Vector{Float64}}(undef,length(ys))
         
         if length(perm_deformations) > 0
-            perm_xs = ground_u_dict(t_anim[i]) .+ [[0];perm_u_dict[t_anim[i]]]
+            perm_xs = ground_u_dict(t_anim[i]) .+ [[0];perm_u_dict(t_anim[i])]
             perm_xvals = []
             perm_x1 = Vector{Vector{Float64}}(undef,length(perm_xs))
         end
@@ -160,10 +160,10 @@ function anim_plot(t_eq, displacements, perm_deformations, ground_motion, h_floo
             end
             if length(col) > 1
                 for a in eachindex(h_floors)
-                    plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ perm_u_dict[t_anim[i]][a],[h_floors[a],h_floors[a]], color = color_a,linestyle = :dash)
+                    plt1 = plot!([col[1],col[end]] .+ ground_u_dict(t_anim[i]) .+ perm_u_dict(t_anim[i])[a],[h_floors[a],h_floors[a]], color = color_a,linestyle = :dash)
                 end
             end
-            plt1 = scatter!([ground_u_dict(t_anim[i]) .+ perm_u_dict[t_anim[i]]],h_floors, markerstrokewidth=0, color = color_a)
+            plt1 = scatter!([ground_u_dict(t_anim[i]) .+ perm_u_dict(t_anim[i])],h_floors, markerstrokewidth=0, color = color_a)
         end
         
         for a in eachindex(col)
