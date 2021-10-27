@@ -92,7 +92,7 @@ function anim_plot(t_eq, displacements, perm_deformations, ground_motion, h_floo
         end
         
         t_index1 = zeros(length(perm_t))
-        for ike in eachindex1(perm_t)
+        for ike in eachindex(perm_t)
             t_index1[ike] = ike
         end
         time2index1 = Spline1D(perm_t,t_index1)
@@ -120,7 +120,7 @@ function anim_plot(t_eq, displacements, perm_deformations, ground_motion, h_floo
     end
     
     t_index2 = zeros(length(t))
-    for ike in eachindex2(t)
+    for ike in eachindex(t)
         t_index2[ike] = ike
     end
     time2index2 = Spline1D(t,t_index2)
