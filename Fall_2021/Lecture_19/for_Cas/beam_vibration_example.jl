@@ -39,8 +39,8 @@ M = CalculateGlobalM(MemberDefinitions, SectionProperties, MaterialProperties, N
 ωn=sqrt.(ωn_squared)
 
 #Raleigh damping
-ωi=ωn[4]   #set first frequency anchor point i
-ωj=ωn[5]   #set second frequency anchor point j
+ωi=ωn[1]   #set first frequency anchor point i
+ωj=ωn[3]   #set second frequency anchor point j
 ζi=0.05    #modal viscous damping ratio in mode i
 ζj=0.05    #modal viscous damping ratio in mode j
 
