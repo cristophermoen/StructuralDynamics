@@ -8,11 +8,8 @@ function BeamShape(q1,q2,q3,q4,L,x,offset)
     w=a0 .+ a1.*x .+ a2.*x.^2 .+ a3.*x.^3 .+ offset
 end
 
-function anim_plot(t_eq, displacements, perm_deformations, ground_motion, h_floors, DOF_disp_plot, anim_settings, bldg_representation = "column", d_shape = 20)
-    # t_eq == time array inputed for the solver
+function anim_plot(t, displacements, perm_deformations, ground_motion, h_floors, DOF_disp_plot, anim_settings, bldg_representation = "column", d_shape = 20)
     # displacements == (t, u)
-    # perm_deformations == (perm_t, perm_u) or () if they are not included
-    # ground_motion == (ground_t, ground_u) or () if they are not included
     
         # t == Array of time from the solver
         # u == [[u_dof1_array], [u_dof2_array], ..., [u_dofn_array]] -> Array of Arrays of different displacements for each DOF (if only 1 DOF, input should be [u])
@@ -38,45 +35,6 @@ function anim_plot(t_eq, displacements, perm_deformations, ground_motion, h_floo
         fps, file_name, speed = (20, "Animate.mp4",1)
     end
     
-    if length(perm_deformations) > 0
-        perm_t, perm_u = perm_deformations
-        perm_u_merged = Vector{Vector{Float64}}(undef, length(perm_u[1]))
-        for j in eachindex(perm_u[1])
-            perm_u_merged[j] = [perm_u[1][j]]
-            if length(perm_u) > 1
-                for i in eachindex(perm_u[2:end])
-                    perm_u_merged[j] = [perm_u_merged[j];perm_u[i+1][j]]
-                end
-            end
-        end
-        
-        t_index1 = zeros(length(perm_t))
-        for ike in eachindex(perm_t)
-            t_index1[ike] = ike
-        end
-        time2index1 = Spline1D(perm_t,t_index1)
-        t_index2u1 = interpolate(perm_u_merged, BSpline(Linear()))
-        perm_u_dict(t_anim) = t_index2u1[time2index1(t_anim)]
-    end
-    
-    if length(ground_motion) > 0
-        ground_t, ground_u = ground_motion
-    else
-        ground_t = t
-        ground_u = zeros(length(u[1]))
-    end
-    ground_u_dict = Spline1D(ground_t, ground_u)
-    
-    t_anim = (t_eq[1]:1/fps:t_eq[end])
-    u_merged = Vector{Vector{Float64}}(undef, length(u[1]))
-    for j in eachindex(u[1])
-        u_merged[j] = [u[1][j]]
-        if length(u) > 1
-            for i in eachindex(u[2:end])
-                u_merged[j] = [u_merged[j];u[i+1][j]]
-            end
-        end
-    end
     
     t_index2 = zeros(length(t))
     for ike in eachindex(t)

@@ -16,11 +16,11 @@ using FFTW
 #' https://medium.com/@khairulomar/deconstructing-time-series-using-fourier-transform-e52dd535a44e
 
 #' Define a sine wave.
-f = 10 #cycles per second
+f = 10 #cycles per second, Hz
 ω = 2 * π * f
-Fs = 1000  #samples per second
+Fs = 1000  #samples per second , dt = 0.001 seconds
 t = range(0.0, 1.0, step = 1/Fs)
-p = sin.(ω * t)
+p = 1.0 * sin.(ω * t)
 
 plot(t, p)
 
@@ -30,7 +30,7 @@ n = length(t)
 
 frequency = Fs/2 .* range(0.0, 1.0, length = floor(Int, n/2))
 
-y_m= 2/n * abs.(signal_fft[1:length(frequency)])
+y_m = 2/n * abs.(signal_fft[1:length(frequency)])
 
 plot(frequency, y_m, xlims = (0.0, 20.0))
 
@@ -65,4 +65,4 @@ eq_signal_fft = fft(utt_g)
 n = length(t_eq)
 frequency = Fs/2 .* range(0.0, maximum(t_eq), length = floor(Int, n/2))
 fourier_coeffs = 2/n * abs.(eq_signal_fft[1:length(frequency)])
-plot(frequency, fourier_coeffs)
+plot(frequency, fourier_coeffs, xlims=(0.0, 100.0))
