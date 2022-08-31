@@ -1,4 +1,4 @@
-# EN 560.630 Structural Dynamics
+# EN.560.630 Structural Dynamics
 Department of Civil and Systems Engineering
 
 Johns Hopkins University
