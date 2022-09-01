@@ -36,6 +36,9 @@ solution = solve(prob, DPRKN6(), tstops=t_start:dt:t_end);
 u = (x->x[2]).(solution.u)  #displacement
 plot(solution.t, u, legend = false, xlabel="time [seconds]", ylabel = "u [m]")
 
+ut = (x->x[1]).(solution.u)  #velocity
+plot(solution.t, ut, legend = false, xlabel="time [seconds]", ylabel = "u [m]")
+
 
 
 
