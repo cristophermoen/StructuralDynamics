@@ -1,3 +1,4 @@
 [deps]
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 InstantFrame = "d4c411e5-b967-4c36-b61c-e426871b3c50"
+Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
