@@ -57,3 +57,20 @@ function calculate_weights(order::Int, x0::T, x::AbstractVector) where T<:Real
     _C[div(N,2)+1] -= sum(_C)
     return _C
 end
+
+
+#example
+
+u = rand(11)  #generate random response
+t = range(0.0, 1.0, 11)
+
+#calculate 2nd derivative at t=0.5 seconds
+index = findfirst(time->time==0.5, t)
+order = 2 #second derivative
+x = t[index-2:index+2] #stencil range
+x0 = t[index]  #local where derivative is being calculated
+
+#calculate Taylor series coeff, i.e. finite difference stencil
+stencil = calculate_weights(order, x0, x)
+
+utt = stencil' * u[index-2:index+2]  #acceleration at t=0.5 seconds
