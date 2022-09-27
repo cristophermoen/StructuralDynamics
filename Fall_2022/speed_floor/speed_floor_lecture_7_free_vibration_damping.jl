@@ -116,8 +116,8 @@ ut_0 = zeros(Float64, size(K,1))
 
 # Define the time range for the simulation.
 t_min = 0.0
-t_max = 0.1
-t_step = 0.01
+t_max = 0.5
+t_step = 0.1
 t = range(t_min, t_max, step=t_step)
 
 # Send in reduced matrices and vectors.
