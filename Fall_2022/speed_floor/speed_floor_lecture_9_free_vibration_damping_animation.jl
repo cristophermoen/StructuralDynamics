@@ -144,3 +144,99 @@ u_midspan=(x->x[index]).(solution.u)
 plot(solution.t, u_midspan, legend=false)
 
 
+#Work on animation
+
+#Test out integrator, cool...
+integ = init(problem, Tsit5())
+# step!(integ, 0.01)
+# Δ = (x->x[node_index]).(integ.u)
+
+
+#Write up functions for animation
+
+#get midspan displacement
+function get_midspan_displacement(integ, node_index)
+
+    Δ = integ.u[node_index]
+    return Δ
+
+end
+
+#get displacement for a step in the solution
+function progress_for_one_step!(integ, node_index)
+
+    step!(integ, 0.01)
+    Δ = get_midspan_displacement(integ, node_index)
+
+    return Δ
+
+end
+
+
+#initialize animation
+using GLMakie
+node_index = findfirst(num->num==32, model.equations.free_dof)
+Δ = u_0ff[node_index]
+
+
+mid_point = Observable(Point2f0(0.0, Δ))
+
+fig = Figure(); display(fig)
+
+ax = Axis(fig[1,1])
+
+GLMakie.scatter!(ax, mid_point; marker=:circle, strokewidth=2, strokecolor=:red, color=:black, markersize = [8])
+
+ax.title = "midspan displacement"
+ax.aspect = DataAspect()
+GLMakie.ylims!(ax, -1.5, 1.5)
+
+
+Δ = progress_for_one_step!(integ, node_index)
+
+
+function animstep!(integ, mid_point, node_index)
+
+    Δ = progress_for_one_step!(integ, node_index)
+    mid_point[] = Point2f0(0.0, Δ)
+
+end
+
+for i=1:10
+    animstep!(integ, mid_point, node_index)
+    sleep(0.001)
+end
+
+
+function make_animation(problem)
+
+    integ = init(problem, Tsit5())
+    node_index = findfirst(num->num==32, model.equations.free_dof)
+    Δ = u_0ff[node_index]
+
+
+    mid_point = Observable(Point2f0(0.0, Δ))
+
+    fig = Figure(); display(fig)
+
+    ax = Axis(fig[1,1])
+
+    GLMakie.scatter!(ax, mid_point; marker=:circle, strokewidth=2, strokecolor=:red, color=:black, markersize = [8])
+
+    ax.title = "midspan displacement"
+    ax.aspect = DataAspect()
+    GLMakie.ylims!(ax, -1.5, 1.5)
+
+    return fig, integ, mid_point
+
+end
+
+
+fig, integ, mid_point = make_animation(problem)
+
+frames = 1:200
+record(fig, "speed_floor.mp4", frames; framerate = 60) do i
+    for j = 1:5
+        animstep!(integ, mid_point, node_index)
+    end
+end

@@ -74,3 +74,16 @@ x0 = t[index]  #local where derivative is being calculated
 stencil = calculate_weights(order, x0, x)
 
 utt = stencil' * u[index-2:index+2]  #acceleration at t=0.5 seconds
+
+#######
+
+#calculate 2nd derivative at t=0.0 seconds
+# index = findfirst(time->time==0.0, t)
+order = 2 #second derivative
+x = t[1:5] #stencil range
+x0 = t[1]  #local where derivative is being calculated
+
+#calculate Taylor series coeff, i.e. finite difference stencil
+stencil = calculate_weights(order, x0, x)
+
+utt = stencil' * u[1:5]  #acceleration at t=0.0 seconds
