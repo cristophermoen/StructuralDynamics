@@ -144,17 +144,6 @@ Y_dof_free = Y_dof[2:end-1]
 
 node_index = [findfirst(num->num==Y_dof_free[i], model.equations.free_dof) for i in eachindex(Y_dof_free)]
 
-
-# u_Y_t = (x->x[2]).(solution.u)
-
-# u_Y = [(x->x[2][index]).(solution.u[i]) for i in eachindex(solution)]
-
-# u_free = [(y->y[Y_dof_free[i]]).(solution.u) for i in eachindex(Y_dof_free)]
-
-# #Plot solution
-# plot(solution.t, u_midspan, legend=false)
-
-
 #Work on animation
 
 #Test out integrator, cool...
@@ -162,18 +151,8 @@ integ = init(problem, Tsit5())
 # step!(integ, 0.01)
 # Δ = (x->x[node_index]).(integ.u)
 
-# Δ = get_beam_displacements(integ, node_index)
-
 
 #Write up functions for animation
-
-#get midspan displacement
-# function get_midspan_displacement(integ, node_index)
-
-#     Δ = integ.u[node_index]
-#     return Δ
-
-# end
 
 #get all beam displacements
 function get_beam_displacements(integ, node_index)
@@ -202,30 +181,35 @@ end
 #initialize animation
 using GLMakie
 # node_index = findfirst(num->num==32, model.equations.free_dof)
-Δ = u_0ff[node_index]
+Δ = [0.0; u_0ff[node_index]; 0.0]
 
-beam_points = [Observable(Point2f0(x[i], Δ[i])) for i in eachindex(Δ)]
+beam_points = Observable([Point2f0(x[i], Δ[i]) for i in eachindex(Δ)])
 
 fig = Figure(); display(fig)
 
 ax = Axis(fig[1,1])
 
-for i in eachindex(beam_points)
-    GLMakie.scatter!(ax, beam_points[i]; marker=:circle, strokewidth=2, strokecolor=:red, color=:black, markersize = [8])
-end
+GLMakie.scatter!(ax, beam_points; marker=:circle, strokewidth=2, strokecolor=:red, color=:black, markersize = 8*ones(Float64,length(x)))
+
 
 ax.title = "beam displacement"
-ax.aspect = DataAspect()
+# ax.aspect = DataAspect()
 GLMakie.ylims!(ax, -1.5, 1.5)
 
 
-Δ = progress_for_one_step!(integ, node_index)
+# Δ = progress_for_one_step!(integ, node_index)
+
+# beam_points[2] = Point2f0(x[1], Δ[1])
 
 
-function animstep!(integ, beam_points, node_index)
+# [1] = Point2f0(x[1], Δ[1])
+
+
+
+function animstep!(integ, points, node_index, x)
 
     Δ = progress_for_one_step!(integ, node_index)
-    beam_points[] = [Point2f0(x[i], Δ[i]) for i in eachindex(Δ)]
+    points[] = [Point2f0(x[i], Δ[i]) for i in eachindex(Δ)]
 
 end
 
@@ -235,35 +219,46 @@ for i=1:10
 end
 
 
-function make_animation(problem)
+Y_dof = 2:6:size(model.equations.Ke, 1)
+
+Y_dof_free = Y_dof[2:end-1]
+
+node_index = [findfirst(num->num==Y_dof_free[i], model.equations.free_dof) for i in eachindex(Y_dof_free)]
+
+
+function make_animation(problem, model)
 
     integ = init(problem, Tsit5())
-    node_index = findfirst(num->num==32, model.equations.free_dof)
-    Δ = u_0ff[node_index]
-
-
-    mid_point = Observable(Point2f0(0.0, Δ))
+    
+    Y_dof = 2:6:size(model.equations.Ke, 1)
+    Y_dof_free = Y_dof[2:end-1]
+    node_index = [findfirst(num->num==Y_dof_free[i], model.equations.free_dof) for i in eachindex(Y_dof_free)]
+        
+    Δ = zeros(Float64, length(node_index)+2)
+  
+    points = Observable([Point2f0(x[i], Δ[i]) for i in eachindex(Δ)])
 
     fig = Figure(); display(fig)
 
     ax = Axis(fig[1,1])
 
-    GLMakie.scatter!(ax, mid_point; marker=:circle, strokewidth=2, strokecolor=:red, color=:black, markersize = [8])
+    GLMakie.scatter!(ax, points; marker=:circle, strokewidth=2, strokecolor=:red, color=:black, markersize = 8*ones(Float64,length(x)))
 
-    ax.title = "midspan displacement"
-    ax.aspect = DataAspect()
+    ax.title = "beam displacement"
+    # ax.aspect = DataAspect()
     GLMakie.ylims!(ax, -1.5, 1.5)
 
-    return fig, integ, mid_point
+    return fig, integ, points
 
 end
 
 
-fig, integ, mid_point = make_animation(problem)
+fig, integ, points = make_animation(problem, model)
 
-frames = 1:200
-record(fig, "speed_floor.mp4", frames; framerate = 60) do i
+frames = 1:10
+record(fig, "/Users/crismoen/Documents/dev/StructuralDynamics/Fall_2022/speed_floor/speed_floor_beam.mp4", frames; framerate = 60) do i
     for j = 1:5
-        animstep!(integ, mid_point, node_index)
+        animstep!(integ, points, node_index, x)
+        sleep(0.001)
     end
 end
