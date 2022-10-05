@@ -1,4 +1,4 @@
-using InstantFrame, DifferentialEquations, Plots
+using InstantFrame, DifferentialEquations
 
 
 material = InstantFrame.Material(names=["steel"], E=[29500.0], ν=[0.3], ρ=[492.0 / 32.17 / 12^4 / 1000.0])  ##ρ = kilo-lbs * s^2 / in^4
@@ -99,7 +99,7 @@ mode_nodal_displacements = InstantFrame.define_nodal_displacements(node, model.s
 
 # Get global y displacement and check mode shape.
 Y = [mode_nodal_displacements[i][2] for i in eachindex(mode_nodal_displacements)]
-plot(x, Y, markershape = :o)
+# plot(x, Y, markershape = :o)
 
 # Normalize mode shape so that the maximum is unity.
 mode_shape = model.solution.ϕ[1] ./ minimum(model.solution.ϕ[1])
@@ -107,7 +107,7 @@ mode_shape = model.solution.ϕ[1] ./ minimum(model.solution.ϕ[1])
 #Check shape again.
 mode_nodal_displacements = InstantFrame.define_nodal_displacements(node, mode_shape)
 Y = [mode_nodal_displacements[i][2] for i in eachindex(mode_nodal_displacements)]
-plot(x, Y, markershape = :o)
+# plot(x, Y, markershape = :o)
 
 
 #Define initial conditions.
@@ -130,7 +130,7 @@ p = (Mff, Kff, Cff)
 u_0ff = u_0[model.equations.free_dof]
 ut_0ff = ut_0[model.equations.free_dof]
                               
-problem = SecondOrderODEProblem(mdof, u_0ff, ut_0ff, (t_min,t_max), p)
+problem = SecondOrderODEProblem(mdof, ut_0ff, u_0ff, (t_min,t_max), p)
 
 # Solve.
 solution = solve(problem, DPRKN8(),tstops=t)
@@ -142,11 +142,17 @@ Y_dof = 2:6:length(node.numbers)*6
 
 Y_dof_free = Y_dof[2:end-1]
 
-# index = findfirst(num->num==32, Y_dof)
-# u_midspan=(x->x[index]).(solution.u)
+node_index = [findfirst(num->num==Y_dof_free[i], model.equations.free_dof) for i in eachindex(Y_dof_free)]
 
-#Plot solution
-plot(solution.t, u_midspan, legend=false)
+
+# u_Y_t = (x->x[2]).(solution.u)
+
+# u_Y = [(x->x[2][index]).(solution.u[i]) for i in eachindex(solution)]
+
+# u_free = [(y->y[Y_dof_free[i]]).(solution.u) for i in eachindex(Y_dof_free)]
+
+# #Plot solution
+# plot(solution.t, u_midspan, legend=false)
 
 
 #Work on animation
@@ -156,21 +162,26 @@ integ = init(problem, Tsit5())
 # step!(integ, 0.01)
 # Δ = (x->x[node_index]).(integ.u)
 
+# Δ = get_beam_displacements(integ, node_index)
+
 
 #Write up functions for animation
 
 #get midspan displacement
-function get_midspan_displacement(integ, node_index)
+# function get_midspan_displacement(integ, node_index)
 
-    Δ = integ.u[node_index]
-    return Δ
+#     Δ = integ.u[node_index]
+#     return Δ
 
-end
+# end
 
 #get all beam displacements
 function get_beam_displacements(integ, node_index)
 
-    Δ = integ.u[node_index]
+    Δ = integ.u.x[2][node_index]
+
+    Δ = [0.0; Δ; 0.0]
+
     return Δ
 
 end
@@ -181,7 +192,7 @@ end
 function progress_for_one_step!(integ, node_index)
 
     step!(integ, 0.01)
-    Δ = get_midspan_displacement(integ, node_index)
+    Δ = get_beam_displacements(integ, node_index)
 
     return Δ
 
@@ -190,19 +201,20 @@ end
 
 #initialize animation
 using GLMakie
-node_index = findfirst(num->num==32, model.equations.free_dof)
+# node_index = findfirst(num->num==32, model.equations.free_dof)
 Δ = u_0ff[node_index]
 
-
-mid_point = Observable(Point2f0(0.0, Δ))
+beam_points = [Observable(Point2f0(x[i], Δ[i])) for i in eachindex(Δ)]
 
 fig = Figure(); display(fig)
 
 ax = Axis(fig[1,1])
 
-GLMakie.scatter!(ax, mid_point; marker=:circle, strokewidth=2, strokecolor=:red, color=:black, markersize = [8])
+for i in eachindex(beam_points)
+    GLMakie.scatter!(ax, beam_points[i]; marker=:circle, strokewidth=2, strokecolor=:red, color=:black, markersize = [8])
+end
 
-ax.title = "midspan displacement"
+ax.title = "beam displacement"
 ax.aspect = DataAspect()
 GLMakie.ylims!(ax, -1.5, 1.5)
 
@@ -210,15 +222,15 @@ GLMakie.ylims!(ax, -1.5, 1.5)
 Δ = progress_for_one_step!(integ, node_index)
 
 
-function animstep!(integ, mid_point, node_index)
+function animstep!(integ, beam_points, node_index)
 
     Δ = progress_for_one_step!(integ, node_index)
-    mid_point[] = Point2f0(0.0, Δ)
+    beam_points[] = [Point2f0(x[i], Δ[i]) for i in eachindex(Δ)]
 
 end
 
 for i=1:10
-    animstep!(integ, mid_point, node_index)
+    animstep!(integ, beam_points, node_index)
     sleep(0.001)
 end
 

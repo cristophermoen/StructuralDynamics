@@ -131,7 +131,7 @@ p = (Mff, Kff)
 u_0ff = u_0[model.equations.free_dof]
 ut_0ff = ut_0[model.equations.free_dof]
                               
-problem = SecondOrderODEProblem(mdof, u_0ff, ut_0ff, (t_min,t_max), p)
+problem = SecondOrderODEProblem(mdof, ut_0ff, u_0ff, (t_min,t_max), p)
 
 # Solve.
 solution = solve(problem, DPRKN8(),tstops=t)
@@ -139,23 +139,10 @@ solution = solve(problem, DPRKN8(),tstops=t)
 
 #Find midspan global-Y dof.
 index = findfirst(num->num==32, model.equations.free_dof)
-u_midspan=(x->x[index]).(solution.u)
+
+u_midspan = [solution.u[i].x[2][index] for i in eachindex(solution)]
+
 
 #Plot solution
 plot(solution.t, u_midspan, legend=false)
 
-
-# # Get nodal displacements and nodal velocities over time.
-# dynamic_nodal_displacements = [(0.0, 0.0, 0.0, 0.0, 0.0, 0.0) for i=1:size(M,1)]
-# all_dynamic_nodal_displacements = [dynamic_nodal_displacements for i in eachindex(solution.t)]
-
-# #t=0
-# mode_nodal_displacements = InstantFrame.define_nodal_displacements(node, mode_shape)
-
-
-
-# u_midspan=(x->x[19]).(solution.u)
-# t_plot=solution.t
-
-# using Plots
-# plot(t_plot, u_midspan)
