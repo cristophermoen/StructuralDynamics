@@ -1,0 +1,4 @@
+[deps]
+GLMakie = "e9467ef8-e4e7-5192-8a1a-b1aee30e663a"
+InstantFrame = "d4c411e5-b967-4c36-b61c-e426871b3c50"
+MAT = "23992714-dd62-5051-b70f-ba57cb901cac"
