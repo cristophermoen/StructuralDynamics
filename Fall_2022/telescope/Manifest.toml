@@ -605,7 +605,7 @@ version = "0.5.1"
 
 [[deps.InstantFrame]]
 deps = ["BenchmarkTools", "GLMakie", "LinearAlgebra", "NonlinearSolve", "Parameters", "Plots", "Rotations", "SparseArrays", "StaticArrays", "WGLMakie"]
-git-tree-sha1 = "9e06980460c80f3670ef6ac63e1e63c7cebfad59"
+git-tree-sha1 = "89f08d6c88b549c4a8897dd49a09adf0ee89acf0"
 repo-rev = "main"
 repo-url = "https://github.com/runtosolve/InstantFrame.jl.git"
 uuid = "d4c411e5-b967-4c36-b61c-e426871b3c50"
